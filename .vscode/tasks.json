@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "掃雷：用預設瀏覽器開啟",
+      "type": "shell",
+      "command": "start",
+      "args": ["${workspaceFolder}\\minesweeper\\index.html"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared", "close": true }
+    },
+    {
+      "label": "貪吃蛇：用預設瀏覽器開啟",
+      "type": "shell",
+      "command": "start",
+      "args": ["${workspaceFolder}\\snake\\index.html"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared", "close": true }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+    // F5 啟動時，請看頂部「執行與偵錯」下拉選單：選「掃雷」才會開 minesweeper；若上次選過「貪吃蛇」，不換選項就仍會開 snake。
+    // 工作區請開資料夾「github.file」根目錄（要能同時看到 minesweeper 與 snake 兩個資料夾），否則 ${workspaceFolder}/minesweeper 路徑會錯。
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "掃雷（開啟本機 HTML）",
+            "file": "${workspaceFolder}/minesweeper/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "貪吃蛇（開啟本機 HTML）",
+            "file": "${workspaceFolder}/snake/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "本機伺服器 http://localhost:8080",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
