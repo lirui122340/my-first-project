@@ -1,0 +1,28 @@
+{
+  "player_spawn": [2, 16],
+  "enemy_spawns": [
+    [24, 2],
+    [26, 2],
+    [24, 4],
+    [26, 4]
+  ],
+  "walls": [
+    { "pos": [0, 0], "size": [30, 1], "breakable": false },
+    { "pos": [0, 19], "size": [30, 1], "breakable": false },
+    { "pos": [0, 0], "size": [1, 20], "breakable": false },
+    { "pos": [29, 0], "size": [1, 20], "breakable": false },
+
+    { "pos": [6, 6], "size": [6, 1], "breakable": false },
+    { "pos": [6, 7], "size": [1, 6], "breakable": false },
+    { "pos": [11, 7], "size": [1, 6], "breakable": false },
+    { "pos": [6, 12], "size": [6, 1], "breakable": false },
+
+    { "pos": [18, 6], "size": [6, 1], "breakable": false },
+    { "pos": [18, 7], "size": [1, 6], "breakable": false },
+    { "pos": [23, 7], "size": [1, 6], "breakable": false },
+    { "pos": [18, 12], "size": [6, 1], "breakable": false },
+
+    { "pos": [14, 9], "size": [2, 2], "breakable": true, "hp": 3 }
+  ]
+}
+
