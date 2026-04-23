@@ -1,5 +1,6 @@
 {
   "player_spawn": [2, 16],
+  "player2_spawn": [27, 16],
   "enemy_spawns": [
     [24, 2],
     [26, 2],

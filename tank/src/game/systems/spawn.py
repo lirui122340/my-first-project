@@ -13,6 +13,7 @@ from game.entities.wall import Wall
 @dataclass
 class LevelData:
     player_spawn: tuple[int, int]
+    player2_spawn: tuple[int, int]
     enemy_spawns: list[tuple[int, int]]
     walls: list[Wall]
 
@@ -27,6 +28,7 @@ def load_level(path: str) -> LevelData:
         raw = json.load(f)
 
     player_spawn = tuple(raw["player_spawn"])
+    player2_spawn = tuple(raw.get("player2_spawn", [27, 16]))
     enemy_spawns = [tuple(x) for x in raw.get("enemy_spawns", [])]
 
     walls: list[Wall] = []
@@ -37,12 +39,17 @@ def load_level(path: str) -> LevelData:
         rect = pygame.Rect(x, y, ww, hh)
         walls.append(Wall(rect=rect, breakable=bool(w.get("breakable", False)), hp=int(w.get("hp", 0))))
 
-    return LevelData(player_spawn=player_spawn, enemy_spawns=enemy_spawns, walls=walls)
+    return LevelData(player_spawn=player_spawn, player2_spawn=player2_spawn, enemy_spawns=enemy_spawns, walls=walls)
 
 
 def spawn_player(level: LevelData) -> Tank:
     x, y = _to_px(level.player_spawn)
-    return Tank.player(x + 2, y + 2)
+    return Tank.player(x + 2, y + 2, kind="p1")
+
+
+def spawn_player2(level: LevelData) -> Tank:
+    x, y = _to_px(level.player2_spawn)
+    return Tank.player(x + 2, y + 2, kind="p2")
 
 
 def spawn_enemies(level: LevelData) -> list[Tank]:

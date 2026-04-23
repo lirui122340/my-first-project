@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 
 import pygame
 
@@ -16,15 +15,9 @@ from game.entities.bullet import Bullet
 from game.entities.tank import Tank
 from game.entities.wall import Wall
 from game.scenes.base import Scene
-from game.systems.ai import SimpleEnemyAI, enemy_should_fire
 from game.systems.physics import bullet_hits_rect, move_rect_with_collisions
-from game.systems.spawn import load_level, spawn_enemies, spawn_player
+from game.systems.spawn import load_level, spawn_player, spawn_player2
 from game.utils import draw_text, load_font
-
-
-@dataclass
-class EnemyController:
-    ai: SimpleEnemyAI
 
 
 class GameplayScene(Scene):
@@ -42,9 +35,10 @@ class GameplayScene(Scene):
             level_path = os.path.normpath(level_path)
 
         self.level = load_level(level_path)
-        self.player = spawn_player(self.level)
-        self.enemies = spawn_enemies(self.level)
-        self.enemy_ctrl = {id(e): EnemyController(ai=SimpleEnemyAI()) for e in self.enemies}
+        # 双人对战：两个玩家
+        self.p1 = spawn_player(self.level)
+        self.p2 = spawn_player2(self.level)
+
         self.walls: list[Wall] = list(self.level.walls)
         self.bullets: list[Bullet] = []
 
@@ -63,8 +57,11 @@ class GameplayScene(Scene):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.paused = not self.paused
-            if not self.paused and event.key == pygame.K_SPACE:
-                self._try_fire(self.player)
+            if not self.paused:
+                if event.key == pygame.K_SPACE:
+                    self._try_fire(self.p1)
+                elif event.key == pygame.K_RCTRL:
+                    self._try_fire(self.p2)
 
     def _try_fire(self, tank: Tank) -> None:
         if tank.fire_timer > 0 or not tank.alive:
@@ -86,36 +83,26 @@ class GameplayScene(Scene):
             return
 
         self.time_s += dt
-        self.player.update_timers(dt)
-        for e in self.enemies:
-            e.update_timers(dt)
+        self.p1.update_timers(dt)
+        self.p2.update_timers(dt)
 
-        self._update_player(dt)
-        self._update_enemies(dt)
+        self._update_players(dt)
         self._update_bullets(dt)
         self._resolve_end_conditions()
 
-    def _update_player(self, dt: float) -> None:
+    def _update_players(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
-        move = self.player.desired_move_from_keys(keys)
-        self.player.set_facing_from_move(move)
-        delta = move * self.player.speed * dt
-        self.player.rect = move_rect_with_collisions(self.player.rect, delta, self._solid_rects)
+        # P1：WASD
+        move1 = self.p1.desired_move_from_keys(keys, scheme="wasd")
+        self.p1.set_facing_from_move(move1)
+        delta1 = move1 * self.p1.speed * dt
+        self.p1.rect = move_rect_with_collisions(self.p1.rect, delta1, self._solid_rects)
 
-    def _update_enemies(self, dt: float) -> None:
-        pc = pygame.Vector2(self.player.rect.centerx, self.player.rect.centery)
-        for e in self.enemies:
-            if not e.alive:
-                continue
-            ctrl = self.enemy_ctrl[id(e)]
-            ec = pygame.Vector2(e.rect.centerx, e.rect.centery)
-            move = ctrl.ai.update(dt, ec, pc)
-            e.set_facing_from_move(move)
-            delta = move * e.speed * dt
-            e.rect = move_rect_with_collisions(e.rect, delta, self._solid_rects)
-
-            if enemy_should_fire(ec, pc, e.facing):
-                self._try_fire(e)
+        # P2：方向键
+        move2 = self.p2.desired_move_from_keys(keys, scheme="arrows")
+        self.p2.set_facing_from_move(move2)
+        delta2 = move2 * self.p2.speed * dt
+        self.p2.rect = move_rect_with_collisions(self.p2.rect, delta2, self._solid_rects)
 
     def _update_bullets(self, dt: float) -> None:
         for b in self.bullets:
@@ -136,20 +123,15 @@ class GameplayScene(Scene):
             if hit_wall:
                 continue
 
-            # 子弹 vs 坦克
-            if b.owner != "player" and self.player.alive and bullet_hits_rect(br, self.player.rect):
-                self.player.take_hit(1)
+            # 子弹 vs 玩家（PVP）
+            if b.owner != "p1" and self.p1.alive and bullet_hits_rect(br, self.p1.rect):
+                self.p1.take_hit(1)
                 b.alive = False
                 continue
-
-            if b.owner != "enemy":
-                for e in self.enemies:
-                    if e.alive and bullet_hits_rect(br, e.rect):
-                        e.take_hit(1)
-                        if not e.alive:
-                            self.kills += 1
-                        b.alive = False
-                        break
+            if b.owner != "p2" and self.p2.alive and bullet_hits_rect(br, self.p2.rect):
+                self.p2.take_hit(1)
+                b.alive = False
+                continue
 
         # 清理可破坏墙
         before = len(self.walls)
@@ -161,12 +143,14 @@ class GameplayScene(Scene):
         self.bullets = [b for b in self.bullets if b.alive]
 
     def _resolve_end_conditions(self) -> None:
-        alive_enemies = [e for e in self.enemies if e.alive]
-        if not self.player.alive:
-            self.manager.switch("gameover", {"won": False, "stats": {"kills": self.kills, "time_s": self.time_s}})
+        if not self.p1.alive and not self.p2.alive:
+            self.manager.switch("gameover", {"won": False, "stats": {"kills": 0, "time_s": self.time_s}})
             return
-        if len(alive_enemies) == 0:
-            self.manager.switch("gameover", {"won": True, "stats": {"kills": self.kills, "time_s": self.time_s}})
+        if not self.p1.alive:
+            self.manager.switch("gameover", {"won": False, "stats": {"kills": 0, "time_s": self.time_s}})
+            return
+        if not self.p2.alive:
+            self.manager.switch("gameover", {"won": True, "stats": {"kills": 0, "time_s": self.time_s}})
             return
 
     def render(self, screen: pygame.Surface) -> None:
@@ -175,15 +159,13 @@ class GameplayScene(Scene):
             w.draw(screen)
         for b in self.bullets:
             b.draw(screen)
-        if self.player.alive:
-            self.player.draw(screen)
-        for e in self.enemies:
-            if e.alive:
-                e.draw(screen)
+        if self.p1.alive:
+            self.p1.draw(screen)
+        if self.p2.alive:
+            self.p2.draw(screen)
 
-        alive_enemies = sum(1 for e in self.enemies if e.alive)
-        draw_text(screen, f"HP: {self.player.hp}", (12, 10), font=self.ui_font)
-        draw_text(screen, f"敌人: {alive_enemies}", (12, 34), font=self.ui_font)
+        draw_text(screen, f"P1 HP: {self.p1.hp}", (12, 10), font=self.ui_font)
+        draw_text(screen, f"P2 HP: {self.p2.hp}", (SCREEN_WIDTH - 12, 10), font=self.ui_font, anchor="topright")
 
         if self.paused:
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)

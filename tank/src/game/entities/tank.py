@@ -29,7 +29,7 @@ def _axis_to_dir(dx: int, dy: int) -> pygame.Vector2:
 
 @dataclass
 class Tank:
-    kind: str  # "player" or "enemy"
+    kind: str  # "p1" | "p2" | "enemy"
     rect: pygame.Rect
     facing: pygame.Vector2
     hp: int
@@ -42,9 +42,9 @@ class Tank:
     alive: bool = True
 
     @staticmethod
-    def player(x: int, y: int) -> "Tank":
+    def player(x: int, y: int, *, kind: str = "p1") -> "Tank":
         return Tank(
-            kind="player",
+            kind=kind,
             rect=pygame.Rect(x, y, 28, 28),
             facing=pygame.Vector2(0, -1),
             hp=PLAYER_MAX_HP,
@@ -68,7 +68,11 @@ class Tank:
     def color(self) -> tuple[int, int, int]:
         if self.hit_flash > 0:
             return (255, 255, 255)
-        return PLAYER_COLOR if self.kind == "player" else ENEMY_COLOR
+        if self.kind == "p1":
+            return PLAYER_COLOR
+        if self.kind == "p2":
+            return (100, 160, 255)
+        return ENEMY_COLOR
 
     def update_timers(self, dt: float) -> None:
         self.fire_timer = clamp(self.fire_timer - dt, 0.0, 999.0)
@@ -89,14 +93,16 @@ class Tank:
         if self.facing.length_squared() > 0:
             self.facing = self.facing.normalize()
 
-    def desired_move_from_keys(self, keys: pygame.key.ScancodeWrapper) -> pygame.Vector2:
-        dx = (1 if keys[pygame.K_d] or keys[pygame.K_RIGHT] else 0) - (
-            1 if keys[pygame.K_a] or keys[pygame.K_LEFT] else 0
-        )
-        dy = (1 if keys[pygame.K_s] or keys[pygame.K_DOWN] else 0) - (
-            1 if keys[pygame.K_w] or keys[pygame.K_UP] else 0
-        )
-        return _axis_to_dir(dx, dy)
+    def desired_move_from_keys(self, keys: pygame.key.ScancodeWrapper, *, scheme: str) -> pygame.Vector2:
+        if scheme == "wasd":
+            dx = (1 if keys[pygame.K_d] else 0) - (1 if keys[pygame.K_a] else 0)
+            dy = (1 if keys[pygame.K_s] else 0) - (1 if keys[pygame.K_w] else 0)
+            return _axis_to_dir(dx, dy)
+        if scheme == "arrows":
+            dx = (1 if keys[pygame.K_RIGHT] else 0) - (1 if keys[pygame.K_LEFT] else 0)
+            dy = (1 if keys[pygame.K_DOWN] else 0) - (1 if keys[pygame.K_UP] else 0)
+            return _axis_to_dir(dx, dy)
+        raise ValueError(f"Unknown control scheme: {scheme}")
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(screen, self.color(), self.rect)
