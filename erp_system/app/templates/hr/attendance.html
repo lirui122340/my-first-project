@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}考勤管理 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">考勤管理 - {{ today }}</h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>工号</th>
+                <th>姓名</th>
+                <th>部门</th>
+                <th>签到时间</th>
+                <th>签退时间</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in records %}
+            <tr>
+                <td>{{ r.employee.employee_no if r.employee else '-' }}</td>
+                <td>{{ r.employee.name if r.employee else '-' }}</td>
+                <td>{{ r.employee.department.name if r.employee and r.employee.department else '-' }}</td>
+                <td>{{ r.check_in.strftime('%H:%M:%S') if r.check_in else '-' }}</td>
+                <td>{{ r.check_out.strftime('%H:%M:%S') if r.check_out else '-' }}</td>
+                <td>
+                    {% if r.status == 'present' %}
+                    <span class="badge bg-success">出勤</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ r.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not r.check_in %}
+                    <a href="{{ url_for('hr.check_in', employee_id=r.employee.id) }}" class="btn btn-sm btn-success">签到</a>
+                    {% elif not r.check_out %}
+                    <a href="{{ url_for('hr.check_out', employee_id=r.employee.id) }}" class="btn btn-sm btn-warning">签退</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

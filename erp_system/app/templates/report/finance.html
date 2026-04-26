@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}财务报表 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">财务报表</h1>
+    <a href="{{ url_for('report.index') }}" class="btn btn-sm btn-secondary">返回</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-stat primary">
+            <div class="card-body">
+                <h6 class="text-muted">账户总余额</h6>
+                <h2>¥{{ "%.2f"|format(total_balance) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat success">
+            <div class="card-body">
+                <h6 class="text-muted">本月收入</h6>
+                <h2>¥{{ "%.2f"|format(income) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat danger">
+            <div class="card-body">
+                <h6 class="text-muted">本月支出</h6>
+                <h2>¥{{ "%.2f"|format(expense) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat warning">
+            <div class="card-body">
+                <h6 class="text-muted">本月利润</h6>
+                <h2>¥{{ "%.2f"|format(profit) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

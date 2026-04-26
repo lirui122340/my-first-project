@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}销售订单详情 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">销售订单 - {{ order.order_no }}</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>订单信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>客户:</strong> {{ order.customer.name if order.customer else '-' }}</p>
+                        <p><strong>订单日期:</strong> {{ order.order_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>状态:</strong>
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-warning">待处理</span>
+                            {% elif order.status == 'completed' %}
+                            <span class="badge bg-success">已完成</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>总金额:</strong> ¥{{ "%.2f"|format(order.total_amount) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>订单明细</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>产品</th>
+                            <th>数量</th>
+                            <th>单价</th>
+                            <th>金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td>{{ item.product.name if item.product else '-' }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>¥{{ item.unit_price }}</td>
+                            <td>¥{{ "%.2f"|format(item.total_price) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if order.status == 'pending' %}
+        <div class="card">
+            <div class="card-header">
+                <h5>添加商品</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('sales.add_item', order_id=order.id) }}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select name="product_id" class="form-select" required>
+                                <option value="">选择产品</option>
+                                {% for p in products %}
+                                <option value="{{ p.id }}">{{ p.sku }} - {{ p.name }} (¥{{ p.sale_price }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="quantity" class="form-control" placeholder="数量" min="1" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="unit_price" class="form-control" placeholder="单价" step="0.01" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-success">添加</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>操作</h5>
+            </div>
+            <div class="card-body">
+                {% if order.status == 'pending' %}
+                <a href="{{ url_for('sales.confirm_order', order_id=order.id) }}" class="btn btn-success w-100 mb-2" onclick="return confirm('确认出库？')">
+                    <i class="bi bi-check"></i> 确认出库
+                </a>
+                {% endif %}
+                <a href="{{ url_for('sales.index') }}" class="btn btn-secondary w-100">返回列表</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}新建采购订单 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">新建采购订单</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.supplier_id.label(class="form-label") }}
+                        {{ form.supplier_id(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.remark.label(class="form-label") }}
+                        {{ form.remark(class="form-control", rows=3) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">创建订单</button>
+                    <a href="{{ url_for('purchase.index') }}" class="btn btn-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

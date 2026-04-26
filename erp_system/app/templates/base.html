@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ERP系统{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: #343a40;
+        }
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 10px 20px;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: #495057;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: #0d6efd;
+        }
+        .content {
+            padding: 20px;
+        }
+        .card-stat {
+            border-left: 4px solid;
+        }
+        .card-stat.primary { border-color: #0d6efd; }
+        .card-stat.success { border-color: #198754; }
+        .card-stat.warning { border-color: #ffc107; }
+        .card-stat.danger { border-color: #dc3545; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar p-0">
+                <div class="position-sticky">
+                    <div class="p-3 text-white">
+                        <h5><i class="bi bi-box-seam"></i> ERP系统</h5>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('dashboard') }}" href="{{ url_for('dashboard.index') }}">
+                                <i class="bi bi-speedometer2"></i> 仪表盘
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('inventory') }}" href="{{ url_for('inventory.index') }}">
+                                <i class="bi bi-box"></i> 库存管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('purchase') }}" href="{{ url_for('purchase.index') }}">
+                                <i class="bi bi-cart-plus"></i> 采购管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('sales') }}" href="{{ url_for('sales.index') }}">
+                                <i class="bi bi-cart-dash"></i> 销售管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('customer') }}" href="{{ url_for('customer.index') }}">
+                                <i class="bi bi-people"></i> 客户管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('finance') }}" href="{{ url_for('finance.index') }}">
+                                <i class="bi bi-currency-yen"></i> 财务管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('hr') }}" href="{{ url_for('hr.index') }}">
+                                <i class="bi bi-person-badge"></i> 人力资源
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('production') }}" href="{{ url_for('production.index') }}">
+                                <i class="bi bi-gear"></i> 生产管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('report') }}" href="{{ url_for('report.index') }}">
+                                <i class="bi bi-graph-up"></i> 报表中心
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <main class="col-md-10 ms-sm-auto px-md-4 content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

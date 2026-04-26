@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}供应商管理 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">供应商管理</h1>
+    <a href="{{ url_for('purchase.add_supplier') }}" class="btn btn-sm btn-primary">
+        <i class="bi bi-plus"></i> 添加供应商
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>联系人</th>
+                <th>电话</th>
+                <th>邮箱</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in suppliers %}
+            <tr>
+                <td>{{ s.name }}</td>
+                <td>{{ s.contact or '-' }}</td>
+                <td>{{ s.phone or '-' }}</td>
+                <td>{{ s.email or '-' }}</td>
+                <td>
+                    {% if s.is_active %}
+                    <span class="badge bg-success">启用</span>
+                    {% else %}
+                    <span class="badge bg-secondary">禁用</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

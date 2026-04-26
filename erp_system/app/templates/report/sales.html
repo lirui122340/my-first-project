@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}销售报表 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">销售报表</h1>
+    <a href="{{ url_for('report.index') }}" class="btn btn-sm btn-secondary">返回</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>日销售统计</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>销售额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d, t in daily_sales %}
+                        <tr>
+                            <td>{{ d }}</td>
+                            <td>¥{{ "%.2f"|format(t) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>客户销售额排名 TOP 10</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>客户</th>
+                            <th>销售额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, total in top_customers %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>¥{{ "%.2f"|format(total) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

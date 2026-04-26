@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}账户管理 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">账户管理</h1>
+    <a href="{{ url_for('finance.add_account') }}" class="btn btn-sm btn-primary">
+        <i class="bi bi-plus"></i> 添加账户
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>账户名称</th>
+                <th>类型</th>
+                <th>银行</th>
+                <th>账号</th>
+                <th>余额</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in accounts %}
+            <tr>
+                <td>{{ a.name }}</td>
+                <td>{{ a.account_type }}</td>
+                <td>{{ a.bank_name or '-' }}</td>
+                <td>{{ a.account_number or '-' }}</td>
+                <td>¥{{ "%.2f"|format(a.balance) }}</td>
+                <td>
+                    {% if a.is_active %}
+                    <span class="badge bg-success">启用</span>
+                    {% else %}
+                    <span class="badge bg-secondary">禁用</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

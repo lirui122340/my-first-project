@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}部门管理 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">部门管理</h1>
+    <a href="{{ url_for('hr.add_department') }}" class="btn btn-sm btn-primary">
+        <i class="bi bi-plus"></i> 添加部门
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>部门名称</th>
+                <th>描述</th>
+                <th>员工数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in departments %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.description or '-' }}</td>
+                <td>{{ d.employees.count() }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

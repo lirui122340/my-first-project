@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}生产订单详情 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">生产订单 - {{ order.order_no }}</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>订单信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>产品:</strong> {{ order.product.name if order.product else '-' }}</p>
+                        <p><strong>数量:</strong> {{ order.quantity }}</p>
+                        <p><strong>完成数量:</strong> {{ order.completed_quantity }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>状态:</strong>
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-warning">待开始</span>
+                            {% elif order.status == 'in_progress' %}
+                            <span class="badge bg-primary">进行中</span>
+                            {% elif order.status == 'completed' %}
+                            <span class="badge bg-success">已完成</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>开始日期:</strong> {{ order.start_date.strftime('%Y-%m-%d') if order.start_date else '-' }}</p>
+                        <p><strong>结束日期:</strong> {{ order.end_date.strftime('%Y-%m-%d') if order.end_date else '-' }}</p>
+                    </div>
+                </div>
+                {% if order.remark %}
+                <hr>
+                <p><strong>备注:</strong> {{ order.remark }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>操作</h5>
+            </div>
+            <div class="card-body">
+                {% if order.status == 'pending' %}
+                <a href="{{ url_for('production.start_order', id=order.id) }}" class="btn btn-primary w-100 mb-2">
+                    <i class="bi bi-play"></i> 开始生产
+                </a>
+                {% elif order.status == 'in_progress' %}
+                <a href="{{ url_for('production.complete_order', id=order.id) }}" class="btn btn-success w-100 mb-2" onclick="return confirm('确认完成？')">
+                    <i class="bi bi-check"></i> 完成生产
+                </a>
+                {% endif %}
+                <a href="{{ url_for('production.index') }}" class="btn btn-secondary w-100">返回列表</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}采购报表 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">采购报表</h1>
+    <a href="{{ url_for('report.index') }}" class="btn btn-sm btn-secondary">返回</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-stat primary">
+            <div class="card-body">
+                <h6 class="text-muted">本月采购总额</h6>
+                <h2>¥{{ "%.2f"|format(monthly_purchase) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>供应商采购统计</h5>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>供应商ID</th>
+                    <th>订单数</th>
+                    <th>采购总额</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in supplier_stats %}
+                <tr>
+                    <td>{{ s.supplier_id }}</td>
+                    <td>{{ s.order_count }}</td>
+                    <td>¥{{ "%.2f"|format(s.total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

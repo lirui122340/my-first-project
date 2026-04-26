@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}库存查询 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">库存查询</h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>产品SKU</th>
+                <th>产品名称</th>
+                <th>仓库</th>
+                <th>数量</th>
+                <th>更新时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in stocks %}
+            <tr>
+                <td>{{ s.product.sku if s.product else '-' }}</td>
+                <td>{{ s.product.name if s.product else '-' }}</td>
+                <td>{{ s.warehouse.name if s.warehouse else '-' }}</td>
+                <td>{{ s.quantity }}</td>
+                <td>{{ s.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

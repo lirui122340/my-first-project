@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}交易记录 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">交易记录</h1>
+    <a href="{{ url_for('finance.add_transaction') }}" class="btn btn-sm btn-primary">
+        <i class="bi bi-plus"></i> 记录交易
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>账户</th>
+                <th>类型</th>
+                <th>金额</th>
+                <th>余额</th>
+                <th>描述</th>
+                <th>日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td>{{ t.account.name if t.account else '-' }}</td>
+                <td>
+                    {% if t.transaction_type == 'income' %}
+                    <span class="badge bg-success">收入</span>
+                    {% else %}
+                    <span class="badge bg-danger">支出</span>
+                    {% endif %}
+                </td>
+                <td>¥{{ "%.2f"|format(t.amount) }}</td>
+                <td>¥{{ "%.2f"|format(t.balance_after) }}</td>
+                <td>{{ t.description or '-' }}</td>
+                <td>{{ t.transaction_date.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

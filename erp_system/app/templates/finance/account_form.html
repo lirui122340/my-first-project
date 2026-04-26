@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}添加账户 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">添加账户</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.account_type.label(class="form-label") }}
+                        {{ form.account_type(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.bank_name.label(class="form-label") }}
+                        {{ form.bank_name(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.account_number.label(class="form-label") }}
+                        {{ form.account_number(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.balance.label(class="form-label") }}
+                        {{ form.balance(class="form-control") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <a href="{{ url_for('finance.accounts') }}" class="btn btn-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

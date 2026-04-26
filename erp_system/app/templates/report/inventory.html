@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}库存报表 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">库存报表</h1>
+    <a href="{{ url_for('report.index') }}" class="btn btn-sm btn-secondary">返回</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>产品名称</th>
+                <th>库存数量</th>
+                <th>库存价值</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in stock_data %}
+            <tr>
+                <td>{{ item.product.sku }}</td>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.stock }}</td>
+                <td>¥{{ "%.2f"|format(item.value) }}</td>
+                <td>
+                    {% if item.status == '低库存' %}
+                    <span class="badge bg-danger">{{ item.status }}</span>
+                    {% else %}
+                    <span class="badge bg-success">{{ item.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

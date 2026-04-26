@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}客户详情 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">客户详情 - {{ customer.name }}</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>基本信息</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>联系人:</strong> {{ customer.contact or '-' }}</p>
+                <p><strong>电话:</strong> {{ customer.phone or '-' }}</p>
+                <p><strong>邮箱:</strong> {{ customer.email or '-' }}</p>
+                <p><strong>地址:</strong> {{ customer.address or '-' }}</p>
+                <p><strong>信用额度:</strong> ¥{{ customer.credit_limit }}</p>
+                <p><strong>客户等级:</strong>
+                    {% if customer.level == 'diamond' %}
+                    <span class="badge bg-primary">钻石</span>
+                    {% elif customer.level == 'gold' %}
+                    <span class="badge bg-warning">金卡</span>
+                    {% elif customer.level == 'silver' %}
+                    <span class="badge bg-secondary">银卡</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark">普通</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5>交易统计</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>订单数量:</strong> {{ orders|length }}</p>
+                <p><strong>累计金额:</strong> ¥{{ "%.2f"|format(total_amount) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>订单历史</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>日期</th>
+                            <th>金额</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in orders %}
+                        <tr>
+                            <td>{{ o.order_no }}</td>
+                            <td>{{ o.order_date.strftime('%Y-%m-%d') }}</td>
+                            <td>¥{{ "%.2f"|format(o.total_amount) }}</td>
+                            <td>
+                                {% if o.status == 'completed' %}
+                                <span class="badge bg-success">已完成</span>
+                                {% else %}
+                                <span class="badge bg-warning">待处理</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

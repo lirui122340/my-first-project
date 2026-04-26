@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}财务管理 - ERP系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">财务管理</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('finance.add_account') }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus"></i> 添加账户
+        </a>
+        <a href="{{ url_for('finance.add_transaction') }}" class="btn btn-sm btn-success ms-2">记录交易</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card card-stat primary">
+            <div class="card-body">
+                <h6 class="text-muted">账户总余额</h6>
+                <h2>¥{{ "%.2f"|format(total_balance) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>账户列表</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>账户名称</th>
+                            <th>类型</th>
+                            <th>余额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in accounts %}
+                        <tr>
+                            <td>{{ a.name }}</td>
+                            <td>{{ a.account_type }}</td>
+                            <td>¥{{ "%.2f"|format(a.balance) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>最近交易</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>类型</th>
+                            <th>金额</th>
+                            <th>描述</th>
+                            <th>日期</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td>
+                                {% if t.transaction_type == 'income' %}
+                                <span class="badge bg-success">收入</span>
+                                {% else %}
+                                <span class="badge bg-danger">支出</span>
+                                {% endif %}
+                            </td>
+                            <td>¥{{ "%.2f"|format(t.amount) }}</td>
+                            <td>{{ t.description or '-' }}</td>
+                            <td>{{ t.transaction_date.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
