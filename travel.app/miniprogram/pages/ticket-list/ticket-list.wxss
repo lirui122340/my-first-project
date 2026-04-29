@@ -1,0 +1,171 @@
+.route-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.route-from,
+.route-to {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.route-arrow {
+  margin: 0 20rpx;
+  color: #1AAD19;
+  font-size: 32rpx;
+}
+
+.route-date {
+  margin-left: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.filter-bar {
+  display: flex;
+  background: #fff;
+  padding: 16rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.filter-item {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999;
+  padding: 12rpx 0;
+  border-radius: 30rpx;
+}
+
+.filter-item.active {
+  background: #1AAD19;
+  color: #fff;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.ticket-list {
+  padding: 0 30rpx;
+}
+
+.ticket-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.train-no {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1AAD19;
+}
+
+.duration {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.ticket-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.time-block {
+  text-align: center;
+}
+
+.time {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.station {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.time-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+.ticket-seats {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.seat-item {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  padding: 8rpx 0;
+}
+
+.seat-type {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.seat-count {
+  font-size: 24rpx;
+  color: #1AAD19;
+  font-weight: bold;
+}
+
+.seat-count.sold-out {
+  color: #ccc;
+}
+
+.ticket-prices {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 20rpx;
+}
+
+.price-item {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  padding: 8rpx 0;
+}
+
+.price-type {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.price-value {
+  font-size: 26rpx;
+  color: #ff6600;
+  font-weight: bold;
+}

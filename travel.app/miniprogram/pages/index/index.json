@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "省钱旅游",
+  "usingComponents": {
+    "city-picker": "/components/city-picker/city-picker"
+  }
+}

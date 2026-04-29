@@ -1,0 +1,72 @@
+.header {
+  text-align: center;
+  padding: 60rpx 0 40rpx;
+}
+
+.title {
+  display: block;
+  font-size: 52rpx;
+  font-weight: bold;
+  color: #1AAD19;
+}
+
+.subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 16rpx;
+}
+
+.form {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 10rpx 30rpx;
+  margin-top: 30rpx;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.form-item:last-of-type {
+  border-bottom: none;
+}
+
+.label {
+  width: 160rpx;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.value {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.placeholder {
+  color: #ccc;
+}
+
+.arrow {
+  font-size: 28rpx;
+  color: #ccc;
+  margin-left: 10rpx;
+}
+
+.search-btn {
+  margin-top: 50rpx;
+  background-color: #1AAD19;
+  color: #fff;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  height: 90rpx;
+  line-height: 90rpx;
+}
+
+.search-btn::after {
+  border: none;
+}

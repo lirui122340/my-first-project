@@ -1,0 +1,69 @@
+<view class="container">
+  <view class="route-bar">
+    <text class="route-from">{{fromStation || fromCity}}</text>
+    <text class="route-arrow">→</text>
+    <text class="route-to">{{toStation || toCity}}</text>
+    <text class="route-date">{{date}}</text>
+  </view>
+
+  <view class="filter-bar">
+    <text
+      class="filter-item {{trainType === 'all' ? 'active' : ''}}"
+      data-type="all"
+      bindtap="onTrainTypeChange"
+    >全部</text>
+    <text
+      class="filter-item {{trainType === 'G-D' ? 'active' : ''}}"
+      data-type="G-D"
+      bindtap="onTrainTypeChange"
+    >高铁/动车</text>
+    <text
+      class="filter-item {{trainType === 'K-T-Z' ? 'active' : ''}}"
+      data-type="K-T-Z"
+      bindtap="onTrainTypeChange"
+    >普通</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>正在查询车次信息...</text>
+  </view>
+
+  <view wx:elif="{{tickets.length === 0}}" class="empty">
+    <text>暂无车次信息</text>
+  </view>
+
+  <view wx:else class="ticket-list">
+    <view wx:for="{{tickets}}" wx:key="trainNo" class="ticket-card">
+      <view class="ticket-header">
+        <text class="train-no">{{item.trainNo}}</text>
+        <text class="duration">{{item.duration}}</text>
+      </view>
+
+      <view class="ticket-time">
+        <view class="time-block">
+          <text class="time">{{item.startTime}}</text>
+          <text class="station">{{item.fromStation}}</text>
+        </view>
+        <view class="time-arrow">→</view>
+        <view class="time-block">
+          <text class="time">{{item.arriveTime}}</text>
+          <text class="station">{{item.toStation}}</text>
+        </view>
+      </view>
+
+      <view class="ticket-seats">
+        <view wx:for="{{item.seats}}" wx:for-index="seatType" wx:for-item="seatCount" wx:key="seatType" class="seat-item">
+          <text class="seat-type">{{seatType}}</text>
+          <text class="seat-count {{seatCount === '无' ? 'sold-out' : ''}}">{{seatCount}}</text>
+        </view>
+      </view>
+
+      <view class="ticket-prices">
+        <view wx:for="{{item.prices}}" wx:for-index="seatType" wx:for-item="price" wx:key="seatType" class="price-item">
+          <text class="price-type">{{seatType}}</text>
+          <text class="price-value">¥{{price}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

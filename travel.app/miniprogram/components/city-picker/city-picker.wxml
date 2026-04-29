@@ -1,0 +1,74 @@
+<view class="city-picker">
+  <view class="picker-header">
+    <text class="cancel-btn" bindtap="onCancel">取消</text>
+    <text class="picker-title">选择城市</text>
+    <text class="placeholder"></text>
+  </view>
+
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索城市"
+      value="{{searchText}}"
+      bindinput="onSearchInput"
+    />
+  </view>
+
+  <scroll-view scroll-y class="city-list" wx:if="{{!searchText}}">
+    <view class="section">
+      <text class="section-title">热门城市</text>
+      <view class="hot-cities">
+        <view
+          wx:for="{{hotCities}}"
+          wx:key="*this"
+          class="hot-city-item"
+          data-city="{{item}}"
+          bindtap="onHotCityTap"
+        >
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+    <view wx:for="{{letters}}" wx:key="*this" class="section" id="letter-{{item}}">
+      <text class="section-title">{{item}}</text>
+      <view
+        wx:for="{{allCities[item]}}"
+        wx:for-item="city"
+        wx:key="*this"
+        class="city-item"
+        data-city="{{city}}"
+        bindtap="onCityTap"
+      >
+        {{city}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view scroll-y class="city-list" wx:if="{{searchText}}">
+    <view
+      wx:for="{{searchResults}}"
+      wx:key="*this"
+      class="city-item"
+      data-city="{{item}}"
+      bindtap="onCityTap"
+    >
+      {{item}}
+    </view>
+    <view wx:if="{{searchResults.length === 0}}" class="empty">
+      未找到匹配城市
+    </view>
+  </scroll-view>
+
+  <view class="letter-bar">
+    <text
+      wx:for="{{letters}}"
+      wx:key="*this"
+      class="letter-item"
+      data-letter="{{item}}"
+      bindtap="onLetterTap"
+    >
+      {{item}}
+    </text>
+  </view>
+</view>

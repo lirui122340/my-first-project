@@ -1,0 +1,59 @@
+<view class="container">
+  <view class="info-bar">
+    <text class="info-text">{{fromCity}} → 可直达城市  {{date}}</text>
+  </view>
+
+  <view class="sort-bar">
+    <text
+      class="sort-item {{sortBy === 'seats' ? 'active' : ''}}"
+      data-sort="seats"
+      bindtap="onSortChange"
+    >
+      按余票排序
+    </text>
+    <text
+      class="sort-item {{sortBy === 'price' ? 'active' : ''}}"
+      data-sort="price"
+      bindtap="onSortChange"
+    >
+      按价格排序
+    </text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>正在查询余票信息...</text>
+  </view>
+
+  <view wx:elif="{{destinations.length === 0}}" class="empty">
+    <text>暂无可直达城市余票信息</text>
+  </view>
+
+  <view wx:else class="city-cards">
+    <view
+      wx:for="{{destinations}}"
+      wx:key="city"
+      class="city-card"
+      data-city="{{item.city}}"
+      bindtap="onCityTap"
+    >
+      <view class="city-name">{{item.city}}</view>
+      <view class="city-stats">
+        <view class="stat">
+          <text class="stat-value seats">{{item.totalSeats}}</text>
+          <text class="stat-label">余票</text>
+        </view>
+        <view class="stat">
+          <text class="stat-value price">¥{{item.minPrice}}</text>
+          <text class="stat-label">最低价</text>
+        </view>
+        <view class="stat">
+          <text class="stat-value">{{item.trainCount}}</text>
+          <text class="stat-label">车次</text>
+        </view>
+      </view>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <view class="refresh-btn" bindtap="onRefresh">刷新余票</view>
+</view>

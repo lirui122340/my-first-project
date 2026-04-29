@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="header">
+    <text class="title">省钱旅游</text>
+    <text class="subtitle">输入出发城市，发现最便宜的火车票</text>
+  </view>
+
+  <view class="form">
+    <view class="form-item" bindtap="onCityTap">
+      <text class="label">出发城市</text>
+      <text class="value {{fromCity ? '' : 'placeholder'}}">
+        {{fromCity || '点击选择城市'}}
+      </text>
+      <text class="arrow">></text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">出发日期</text>
+      <picker mode="date" value="{{date}}" start="{{today}}" bindchange="onDateChange">
+        <text class="value">{{date}}</text>
+      </picker>
+      <text class="arrow">></text>
+    </view>
+
+    <button class="search-btn" bindtap="onSearch">查询可直达城市</button>
+  </view>
+
+  <city-picker
+    wx:if="{{showCityPicker}}"
+    bind:confirm="onCityConfirm"
+    bind:cancel="onCityCancel"
+  />
+</view>
