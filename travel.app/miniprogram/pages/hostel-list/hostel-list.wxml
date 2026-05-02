@@ -1,0 +1,69 @@
+<view class="page">
+  <view class="header">
+    <view class="city-info">
+      <text class="city-name">{{city}}</text>
+      <text class="avg-price">均价 ¥{{avgPrice}}/晚</text>
+    </view>
+    <view class="filter-bar">
+      <text
+        class="filter-item {{sortBy === 'price' ? 'active' : ''}}"
+        data-sort="price"
+        bindtap="onSortChange"
+      >按价格</text>
+      <text
+        class="filter-item {{sortBy === 'rating' ? 'active' : ''}}"
+        data-sort="rating"
+        bindtap="onSortChange"
+      >按评分</text>
+      <text
+        class="filter-item {{typeFilter === '青旅' ? 'active' : ''}}"
+        data-type="青旅"
+        bindtap="onTypeFilter"
+      >青旅</text>
+      <text
+        class="filter-item {{typeFilter === '经济酒店' ? 'active' : ''}}"
+        data-type="经济酒店"
+        bindtap="onTypeFilter"
+      >经济酒店</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <scroll-view wx:else scroll-y class="content-scroll" enhanced show-scrollbar="{{false}}">
+    <view wx:if="{{hostels.length === 0}}" class="empty">
+      <text>暂无该城市住宿数据</text>
+    </view>
+
+    <view wx:else class="hostel-cards">
+      <view wx:for="{{hostels}}" wx:key="name" class="hostel-card">
+        <view class="hostel-top">
+          <view class="hostel-name-row">
+            <text class="hostel-name">{{item.name}}</text>
+            <text class="hostel-type {{item.type === '青旅' ? 'type-hostel' : 'type-hotel'}}">{{item.type}}</text>
+          </view>
+          <view class="hostel-rating">
+            <text class="rating-star">★</text>
+            <text class="rating-num">{{item.rating}}</text>
+          </view>
+        </view>
+        <view class="hostel-mid">
+          <text class="hostel-location">📍 {{item.location}}</text>
+        </view>
+        <view class="hostel-tags">
+          <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="tag">{{tag}}</text>
+        </view>
+        <view class="hostel-bottom">
+          <text class="hostel-price">¥{{item.price}}</text>
+          <text class="price-unit">/晚</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="refresh-btn" bindtap="onRefresh">刷新</view>
+</view>

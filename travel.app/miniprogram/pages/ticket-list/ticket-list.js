@@ -30,8 +30,23 @@ Page({
         date: this.data.date,
         train_type: this.data.trainType,
       });
+
+      const tickets = (data.tickets || []).map((t) => {
+        const seatList = [];
+        if (t.seats) {
+          for (const [type, count] of Object.entries(t.seats)) {
+            seatList.push({
+              type,
+              count,
+              price: (t.prices && t.prices[type]) || 0,
+            });
+          }
+        }
+        return { ...t, seatList };
+      });
+
       this.setData({
-        tickets: data.tickets || [],
+        tickets,
         fromStation: data.fromStation || '',
         toStation: data.toStation || '',
       });
@@ -48,5 +63,11 @@ Page({
     const trainType = e.currentTarget.dataset.type;
     this.setData({ trainType, loading: true });
     this.fetchTrains();
+  },
+
+  onRouteRecommend() {
+    wx.navigateTo({
+      url: `/pages/route-recommend/route-recommend?fromCity=${encodeURIComponent(this.data.fromCity)}&toCity=${encodeURIComponent(this.data.toCity)}&date=${this.data.date}`,
+    });
   },
 });

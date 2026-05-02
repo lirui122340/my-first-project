@@ -22,10 +22,11 @@
       data-type="K-T-Z"
       bindtap="onTrainTypeChange"
     >普通</text>
+    <text class="filter-item route-btn" bindtap="onRouteRecommend">💡省钱路线</text>
   </view>
 
   <view wx:if="{{loading}}" class="loading">
-    <text>正在查询车次信息...</text>
+    <text>正在查询12306实时票价...</text>
   </view>
 
   <view wx:elif="{{tickets.length === 0}}" class="empty">
@@ -52,16 +53,10 @@
       </view>
 
       <view class="ticket-seats">
-        <view wx:for="{{item.seats}}" wx:for-index="seatType" wx:for-item="seatCount" wx:key="seatType" class="seat-item">
-          <text class="seat-type">{{seatType}}</text>
-          <text class="seat-count {{seatCount === '无' ? 'sold-out' : ''}}">{{seatCount}}</text>
-        </view>
-      </view>
-
-      <view class="ticket-prices">
-        <view wx:for="{{item.prices}}" wx:for-index="seatType" wx:for-item="price" wx:key="seatType" class="price-item">
-          <text class="price-type">{{seatType}}</text>
-          <text class="price-value">¥{{price}}</text>
+        <view wx:for="{{item.seatList}}" wx:for-item="seat" wx:key="type" class="seat-row">
+          <text class="seat-type">{{seat.type}}</text>
+          <text class="seat-count {{seat.count === '无' || seat.count === 0 ? 'sold-out' : 'available'}}">{{seat.count}}</text>
+          <text wx:if="{{seat.price > 0}}" class="seat-price">¥{{seat.price}}</text>
         </view>
       </view>
     </view>

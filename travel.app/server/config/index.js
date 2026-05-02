@@ -3,5 +3,5 @@ module.exports = {
   apiKey: process.env.API_KEY || '',
   cacheTTL: parseInt(process.env.CACHE_TTL) || 300,
   concurrencyLimit: 5,
-  requestDelay: 500,
+  requestDelay: 800,
 };

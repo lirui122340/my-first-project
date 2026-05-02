@@ -1,6 +1,19 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.header {
+  flex-shrink: 0;
+  padding: 20rpx 20rpx 0;
+}
+
 .info-bar {
   background: #fff;
   padding: 24rpx 30rpx;
+  border-radius: 16rpx;
   margin-bottom: 20rpx;
 }
 
@@ -12,8 +25,10 @@
 .sort-bar {
   display: flex;
   background: #fff;
-  padding: 20rpx 30rpx;
+  padding: 16rpx 30rpx;
+  border-radius: 16rpx;
   margin-bottom: 20rpx;
+  gap: 20rpx;
 }
 
 .sort-item {
@@ -21,8 +36,9 @@
   text-align: center;
   font-size: 26rpx;
   color: #999;
-  padding: 12rpx 0;
+  padding: 14rpx 0;
   border-radius: 30rpx;
+  background: #f5f5f5;
 }
 
 .sort-item.active {
@@ -38,8 +54,13 @@
   font-size: 28rpx;
 }
 
+.city-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
 .city-cards {
-  padding: 0 30rpx;
+  padding: 0 20rpx;
 }
 
 .city-card {
@@ -47,15 +68,16 @@
   align-items: center;
   background: #fff;
   border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 16rpx;
 }
 
 .city-name {
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: bold;
   color: #333;
   width: 120rpx;
+  flex-shrink: 0;
 }
 
 .city-stats {
@@ -71,8 +93,9 @@
 }
 
 .stat-value {
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: bold;
+  color: #333;
 }
 
 .stat-value.seats {
@@ -86,19 +109,43 @@
 .stat-label {
   font-size: 22rpx;
   color: #999;
-  margin-top: 6rpx;
+  margin-top: 4rpx;
 }
 
 .arrow {
-  font-size: 28rpx;
+  font-size: 32rpx;
   color: #ccc;
-  margin-left: 20rpx;
+  margin-left: 16rpx;
+}
+
+.city-actions {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.action-hostel {
+  font-size: 22rpx;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 6rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+.bottom-space {
+  height: 120rpx;
 }
 
 .refresh-btn {
-  text-align: center;
-  padding: 30rpx;
-  color: #1AAD19;
+  position: fixed;
+  bottom: 40rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1AAD19;
+  color: #fff;
+  padding: 20rpx 60rpx;
+  border-radius: 40rpx;
   font-size: 28rpx;
-  margin-top: 20rpx;
+  text-align: center;
+  z-index: 10;
 }

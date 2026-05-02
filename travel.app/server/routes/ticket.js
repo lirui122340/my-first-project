@@ -17,7 +17,12 @@ router.get('/destinations', async (req, res) => {
     const result = await batchQueryDestinations(from_city, date);
 
     if (sort_by === 'price') {
-      result.destinations.sort((a, b) => a.minPrice - b.minPrice);
+      result.destinations.sort((a, b) => {
+        if (a.minPrice === 0 && b.minPrice === 0) return b.totalSeats - a.totalSeats;
+        if (a.minPrice === 0) return 1;
+        if (b.minPrice === 0) return -1;
+        return a.minPrice - b.minPrice;
+      });
     } else {
       result.destinations.sort((a, b) => b.totalSeats - a.totalSeats);
     }
@@ -40,9 +45,9 @@ router.get('/trains', async (req, res) => {
   }
 
   try {
-    const result = await ticketService.queryTickets(from_city, to_city, date);
+    const result = await ticketService.queryTicketsWithPrices(from_city, to_city, date);
 
-    if (!result || !result.data) {
+    if (!result || !result.data || result.data.length === 0) {
       return res.json({
         code: 0,
         message: 'success',
@@ -66,6 +71,13 @@ router.get('/trains', async (req, res) => {
         prefixes.some((p) => t.trainNo.startsWith(p))
       );
     }
+
+    tickets.forEach((t) => {
+      delete t.trainNoInternal;
+      delete t.fromStationNo;
+      delete t.toStationNo;
+      delete t.seatTypes;
+    });
 
     res.json({
       code: 0,

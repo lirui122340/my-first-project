@@ -37,10 +37,16 @@ Page({
 
   onSortChange(e) {
     const sortBy = e.currentTarget.dataset.sort;
+    if (sortBy === this.data.sortBy) return;
     this.setData({ sortBy });
     const sorted = [...this.data.destinations];
     if (sortBy === 'price') {
-      sorted.sort((a, b) => a.minPrice - b.minPrice);
+      sorted.sort((a, b) => {
+        if (a.minPrice === 0 && b.minPrice === 0) return b.totalSeats - a.totalSeats;
+        if (a.minPrice === 0) return 1;
+        if (b.minPrice === 0) return -1;
+        return a.minPrice - b.minPrice;
+      });
     } else {
       sorted.sort((a, b) => b.totalSeats - a.totalSeats);
     }
@@ -51,6 +57,13 @@ Page({
     const city = e.currentTarget.dataset.city;
     wx.navigateTo({
       url: `/pages/ticket-list/ticket-list?fromCity=${encodeURIComponent(this.data.fromCity)}&toCity=${encodeURIComponent(city)}&date=${this.data.date}`,
+    });
+  },
+
+  onHostelTap(e) {
+    const city = e.currentTarget.dataset.city;
+    wx.navigateTo({
+      url: `/pages/hostel-list/hostel-list?city=${encodeURIComponent(city)}`,
     });
   },
 

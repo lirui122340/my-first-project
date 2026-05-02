@@ -1,0 +1,284 @@
+{
+  "北京": {
+    "city": "北京",
+    "avgPrice": 80,
+    "hostels": [
+      {"name": "北京青年旅舍", "type": "青旅", "price": 55, "rating": 4.5, "location": "东城区", "tags": ["近地铁", "免费WiFi"]},
+      {"name": "北平国际青旅", "type": "青旅", "price": 68, "rating": 4.6, "location": "西城区", "tags": ["老北京风情", "天台花园"]},
+      {"name": "北京和园青旅", "type": "青旅", "price": 60, "rating": 4.3, "location": "海淀区", "tags": ["近清华北大", "安静"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 198, "rating": 4.0, "location": "朝阳区", "tags": ["连锁", "早餐"]},
+      {"name": "汉庭酒店", "type": "经济酒店", "price": 189, "rating": 4.1, "location": "东城区", "tags": ["连锁", "近王府井"]}
+    ]
+  },
+  "上海": {
+    "city": "上海",
+    "avgPrice": 85,
+    "hostels": [
+      {"name": "上海蓝山青旅", "type": "青旅", "price": 70, "rating": 4.4, "location": "黄浦区", "tags": ["近外滩", "免费WiFi"]},
+      {"name": "上海明堂青旅", "type": "青旅", "price": 65, "rating": 4.5, "location": "静安区", "tags": ["近南京路", "文艺"]},
+      {"name": "老上海青旅", "type": "青旅", "price": 58, "rating": 4.2, "location": "徐汇区", "tags": ["老洋房", "近地铁"]},
+      {"name": "锦江之星", "type": "经济酒店", "price": 219, "rating": 4.0, "location": "浦东新区", "tags": ["连锁", "早餐"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 208, "rating": 3.9, "location": "黄浦区", "tags": ["连锁", "近人民广场"]}
+    ]
+  },
+  "广州": {
+    "city": "广州",
+    "avgPrice": 65,
+    "hostels": [
+      {"name": "广州向日葵青旅", "type": "青旅", "price": 45, "rating": 4.3, "location": "越秀区", "tags": ["近北京路", "免费WiFi"]},
+      {"name": "广州窝趣青旅", "type": "青旅", "price": 50, "rating": 4.4, "location": "天河区", "tags": ["近珠江新城", "社交"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 158, "rating": 3.8, "location": "海珠区", "tags": ["连锁", "近地铁"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 168, "rating": 4.0, "location": "越秀区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "深圳": {
+    "city": "深圳",
+    "avgPrice": 70,
+    "hostels": [
+      {"name": "深圳旅友青旅", "type": "青旅", "price": 50, "rating": 4.2, "location": "南山区", "tags": ["近世界之窗", "免费WiFi"]},
+      {"name": "深圳蜗牛青旅", "type": "青旅", "price": 55, "rating": 4.3, "location": "福田区", "tags": ["近CBD", "安静"]},
+      {"name": "城市便捷酒店", "type": "经济酒店", "price": 178, "rating": 4.0, "location": "罗湖区", "tags": ["连锁", "近口岸"]}
+    ]
+  },
+  "成都": {
+    "city": "成都",
+    "avgPrice": 55,
+    "hostels": [
+      {"name": "成都懒骨头青旅", "type": "青旅", "price": 35, "rating": 4.6, "location": "武侯区", "tags": ["近锦里", "火锅派对"]},
+      {"name": "成都龙堂青旅", "type": "青旅", "price": 40, "rating": 4.5, "location": "青羊区", "tags": ["近宽窄巷子", "文艺"]},
+      {"name": "成都四号工厂青旅", "type": "青旅", "price": 45, "rating": 4.4, "location": "锦江区", "tags": ["近春熙路", "工业风"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 148, "rating": 4.0, "location": "武侯区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "杭州": {
+    "city": "杭州",
+    "avgPrice": 70,
+    "hostels": [
+      {"name": "杭州明堂青旅", "type": "青旅", "price": 55, "rating": 4.5, "location": "西湖区", "tags": ["近西湖", "免费WiFi"]},
+      {"name": "杭州江南驿青旅", "type": "青旅", "price": 50, "rating": 4.4, "location": "上城区", "tags": ["近河坊街", "江南风"]},
+      {"name": "杭州途家青旅", "type": "青旅", "price": 48, "rating": 4.2, "location": "拱墅区", "tags": ["近运河", "安静"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 178, "rating": 4.0, "location": "西湖区", "tags": ["连锁", "近景区"]}
+    ]
+  },
+  "武汉": {
+    "city": "武汉",
+    "avgPrice": 55,
+    "hostels": [
+      {"name": "武汉探路者青旅", "type": "青旅", "price": 38, "rating": 4.3, "location": "武昌区", "tags": ["近黄鹤楼", "免费WiFi"]},
+      {"name": "武汉江城青旅", "type": "青旅", "price": 42, "rating": 4.2, "location": "江汉区", "tags": ["近江汉路", "社交"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 138, "rating": 3.9, "location": "洪山区", "tags": ["连锁", "近光谷"]}
+    ]
+  },
+  "西安": {
+    "city": "西安",
+    "avgPrice": 55,
+    "hostels": [
+      {"name": "西安湘子门青旅", "type": "青旅", "price": 40, "rating": 4.5, "location": "碑林区", "tags": ["近城墙", "古风"]},
+      {"name": "西安书院青旅", "type": "青旅", "price": 45, "rating": 4.4, "location": "雁塔区", "tags": ["近大雁塔", "文化氛围"]},
+      {"name": "西安汉唐驿青旅", "type": "青旅", "price": 38, "rating": 4.3, "location": "莲湖区", "tags": ["近回民街", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 148, "rating": 4.0, "location": "碑林区", "tags": ["连锁", "近钟楼"]}
+    ]
+  },
+  "南京": {
+    "city": "南京",
+    "avgPrice": 60,
+    "hostels": [
+      {"name": "南京夫子庙青旅", "type": "青旅", "price": 48, "rating": 4.4, "location": "秦淮区", "tags": ["近夫子庙", "秦淮河景"]},
+      {"name": "南京时光青旅", "type": "青旅", "price": 45, "rating": 4.3, "location": "鼓楼区", "tags": ["近玄武湖", "安静"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 168, "rating": 4.0, "location": "玄武区", "tags": ["连锁", "近中山陵"]}
+    ]
+  },
+  "重庆": {
+    "city": "重庆",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "重庆瓦舍青旅", "type": "青旅", "price": 35, "rating": 4.5, "location": "渝中区", "tags": ["近解放碑", "火锅聚会"]},
+      {"name": "重庆懒鱼青旅", "type": "青旅", "price": 38, "rating": 4.4, "location": "南岸区", "tags": ["近洪崖洞", "江景"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 128, "rating": 3.8, "location": "渝北区", "tags": ["连锁", "近机场"]}
+    ]
+  },
+  "长沙": {
+    "city": "长沙",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "长沙岳麓青旅", "type": "青旅", "price": 35, "rating": 4.3, "location": "岳麓区", "tags": ["近岳麓山", "免费WiFi"]},
+      {"name": "长沙太平街青旅", "type": "青旅", "price": 40, "rating": 4.4, "location": "天心区", "tags": ["近太平老街", "小吃"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 138, "rating": 4.0, "location": "芙蓉区", "tags": ["连锁", "近五一广场"]}
+    ]
+  },
+  "昆明": {
+    "city": "昆明",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "昆明大脚氏青旅", "type": "青旅", "price": 30, "rating": 4.5, "location": "五华区", "tags": ["近翠湖", "旅行氛围"]},
+      {"name": "昆明驼峰青旅", "type": "青旅", "price": 35, "rating": 4.4, "location": "盘龙区", "tags": ["近金殿", "免费WiFi"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 118, "rating": 3.8, "location": "官渡区", "tags": ["连锁", "近火车站"]}
+    ]
+  },
+  "贵阳": {
+    "city": "贵阳",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "贵阳逸都青旅", "type": "青旅", "price": 30, "rating": 4.3, "location": "南明区", "tags": ["近甲秀楼", "免费WiFi"]},
+      {"name": "贵阳背包客青旅", "type": "青旅", "price": 35, "rating": 4.2, "location": "云岩区", "tags": ["近黔灵山", "社交"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 128, "rating": 3.9, "location": "南明区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "南宁": {
+    "city": "南宁",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "南宁老友青旅", "type": "青旅", "price": 30, "rating": 4.2, "location": "青秀区", "tags": ["近中山路", "免费WiFi"]},
+      {"name": "南宁绿城青旅", "type": "青旅", "price": 35, "rating": 4.3, "location": "西乡塘区", "tags": ["近广西大学", "安静"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 118, "rating": 3.8, "location": "兴宁区", "tags": ["连锁", "近火车站"]}
+    ]
+  },
+  "厦门": {
+    "city": "厦门",
+    "avgPrice": 65,
+    "hostels": [
+      {"name": "厦门国际青旅", "type": "青旅", "price": 50, "rating": 4.5, "location": "思明区", "tags": ["近鼓浪屿", "海景"]},
+      {"name": "厦门曾厝垵青旅", "type": "青旅", "price": 45, "rating": 4.4, "location": "思明区", "tags": ["近曾厝垵", "文艺"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 188, "rating": 4.0, "location": "思明区", "tags": ["连锁", "近中山路"]}
+    ]
+  },
+  "福州": {
+    "city": "福州",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "福州三坊七巷青旅", "type": "青旅", "price": 40, "rating": 4.3, "location": "鼓楼区", "tags": ["近三坊七巷", "古风"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 128, "rating": 3.8, "location": "台江区", "tags": ["连锁", "近商圈"]}
+    ]
+  },
+  "兰州": {
+    "city": "兰州",
+    "avgPrice": 40,
+    "hostels": [
+      {"name": "兰州丝路青旅", "type": "青旅", "price": 28, "rating": 4.3, "location": "城关区", "tags": ["近黄河", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 118, "rating": 3.9, "location": "七里河区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "哈尔滨": {
+    "city": "哈尔滨",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "哈尔滨卡兹青旅", "type": "青旅", "price": 35, "rating": 4.4, "location": "道里区", "tags": ["近中央大街", "俄式风情"]},
+      {"name": "哈尔滨北方青旅", "type": "青旅", "price": 40, "rating": 4.2, "location": "南岗区", "tags": ["近索菲亚教堂", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 148, "rating": 4.0, "location": "道里区", "tags": ["连锁", "近防洪纪念塔"]}
+    ]
+  },
+  "济南": {
+    "city": "济南",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "济南老街青旅", "type": "青旅", "price": 35, "rating": 4.2, "location": "历下区", "tags": ["近趵突泉", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 138, "rating": 3.9, "location": "历城区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "青岛": {
+    "city": "青岛",
+    "avgPrice": 60,
+    "hostels": [
+      {"name": "青岛奥博维特青旅", "type": "青旅", "price": 45, "rating": 4.5, "location": "市南区", "tags": ["近栈桥", "海景"]},
+      {"name": "青岛凯越青旅", "type": "青旅", "price": 50, "rating": 4.3, "location": "市北区", "tags": ["近啤酒街", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 168, "rating": 4.0, "location": "市南区", "tags": ["连锁", "近八大关"]}
+    ]
+  },
+  "郑州": {
+    "city": "郑州",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "郑州中原青旅", "type": "青旅", "price": 32, "rating": 4.2, "location": "金水区", "tags": ["近二七塔", "免费WiFi"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 128, "rating": 3.8, "location": "二七区", "tags": ["连锁", "近火车站"]}
+    ]
+  },
+  "天津": {
+    "city": "天津",
+    "avgPrice": 60,
+    "hostels": [
+      {"name": "天津意风区青旅", "type": "青旅", "price": 45, "rating": 4.3, "location": "河北区", "tags": ["近意式风情街", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 158, "rating": 4.0, "location": "和平区", "tags": ["连锁", "近五大道"]}
+    ]
+  },
+  "石家庄": {
+    "city": "石家庄",
+    "avgPrice": 40,
+    "hostels": [
+      {"name": "石家庄国际青旅", "type": "青旅", "price": 28, "rating": 4.1, "location": "长安区", "tags": ["近火车站", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 118, "rating": 3.9, "location": "桥西区", "tags": ["连锁", "早餐"]}
+    ]
+  },
+  "太原": {
+    "city": "太原",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "太原晋祠青旅", "type": "青旅", "price": 30, "rating": 4.1, "location": "晋源区", "tags": ["近晋祠", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 128, "rating": 3.9, "location": "小店区", "tags": ["连锁", "近机场"]}
+    ]
+  },
+  "合肥": {
+    "city": "合肥",
+    "avgPrice": 50,
+    "hostels": [
+      {"name": "合肥逍遥津青旅", "type": "青旅", "price": 35, "rating": 4.2, "location": "庐阳区", "tags": ["近逍遥津", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 138, "rating": 4.0, "location": "蜀山区", "tags": ["连锁", "近大蜀山"]}
+    ]
+  },
+  "南昌": {
+    "city": "南昌",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "南昌滕王阁青旅", "type": "青旅", "price": 32, "rating": 4.2, "location": "东湖区", "tags": ["近滕王阁", "免费WiFi"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 118, "rating": 3.8, "location": "西湖区", "tags": ["连锁", "近八一广场"]}
+    ]
+  },
+  "沈阳": {
+    "city": "沈阳",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "沈阳北站青旅", "type": "青旅", "price": 30, "rating": 4.1, "location": "沈河区", "tags": ["近故宫", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 128, "rating": 3.9, "location": "和平区", "tags": ["连锁", "近中街"]}
+    ]
+  },
+  "大连": {
+    "city": "大连",
+    "avgPrice": 60,
+    "hostels": [
+      {"name": "大连渤海青旅", "type": "青旅", "price": 45, "rating": 4.3, "location": "中山区", "tags": ["近星海广场", "海景"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 168, "rating": 4.0, "location": "沙河口区", "tags": ["连锁", "近商圈"]}
+    ]
+  },
+  "长春": {
+    "city": "长春",
+    "avgPrice": 40,
+    "hostels": [
+      {"name": "长春伪满皇宫青旅", "type": "青旅", "price": 28, "rating": 4.1, "location": "宽城区", "tags": ["近伪满皇宫", "免费WiFi"]},
+      {"name": "7天连锁酒店", "type": "经济酒店", "price": 108, "rating": 3.8, "location": "朝阳区", "tags": ["连锁", "近长影"]}
+    ]
+  },
+  "桂林": {
+    "city": "桂林",
+    "avgPrice": 45,
+    "hostels": [
+      {"name": "桂林瓦当青旅", "type": "青旅", "price": 30, "rating": 4.4, "location": "象山区", "tags": ["近象鼻山", "免费WiFi"]},
+      {"name": "桂林阳朔西街青旅", "type": "青旅", "price": 35, "rating": 4.5, "location": "阳朔县", "tags": ["近西街", "山水景"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 128, "rating": 3.9, "location": "秀峰区", "tags": ["连锁", "近两江四湖"]}
+    ]
+  },
+  "苏州": {
+    "city": "苏州",
+    "avgPrice": 60,
+    "hostels": [
+      {"name": "苏州平江路青旅", "type": "青旅", "price": 48, "rating": 4.4, "location": "姑苏区", "tags": ["近平江路", "江南风"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 168, "rating": 4.0, "location": "姑苏区", "tags": ["连锁", "近拙政园"]}
+    ]
+  },
+  "宁波": {
+    "city": "宁波",
+    "avgPrice": 55,
+    "hostels": [
+      {"name": "宁波老外滩青旅", "type": "青旅", "price": 40, "rating": 4.2, "location": "海曙区", "tags": ["近老外滩", "免费WiFi"]},
+      {"name": "如家快捷酒店", "type": "经济酒店", "price": 148, "rating": 3.9, "location": "鄞州区", "tags": ["连锁", "近商圈"]}
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+<view class="page">
+  <view class="header">
+    <view class="route-title">
+      <text class="city">{{fromCity}}</text>
+      <text class="arrow-icon">→</text>
+      <text class="city">{{toCity}}</text>
+      <text class="date-text">{{date}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>正在查询中转省钱路线...</text>
+  </view>
+
+  <scroll-view wx:else scroll-y class="content-scroll" enhanced show-scrollbar="{{false}}">
+    <view wx:if="{{direct}}" class="direct-card">
+      <view class="card-header">
+        <text class="card-title">直达方案</text>
+        <text class="direct-tag">直达</text>
+      </view>
+      <view class="card-body">
+        <view class="price-row">
+          <text class="price-label">最低票价</text>
+          <text class="price-value">¥{{direct.minPrice || '暂无'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-item">历时 {{direct.duration || '-'}}</text>
+          <text class="info-item">{{direct.trainCount}}趟车次</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{recommendations.length > 0}}" class="section">
+      <view class="section-title">
+        <text class="title-icon">💡</text>
+        <text>省钱中转方案</text>
+      </view>
+      <view wx:for="{{recommendations}}" wx:key="transitCity" class="transfer-card">
+        <view class="transfer-header">
+          <text class="transit-city">{{item.transitCity}} 中转</text>
+          <text class="save-tag" wx:if="{{item.savings > 0}}">省¥{{item.savings}}</text>
+          <text class="reach-tag" wx:else>{{item.tag}}</text>
+        </view>
+        <view class="transfer-body">
+          <view class="leg">
+            <view class="leg-route">
+              <text>{{item.leg1.fromCity}}</text>
+              <text class="leg-arrow">→</text>
+              <text class="leg-highlight">{{item.leg1.toCity}}</text>
+            </view>
+            <view class="leg-info">
+              <text class="leg-price">¥{{item.leg1.minPrice}}</text>
+              <text class="leg-detail">{{item.leg1.duration}} · {{item.leg1.trainCount}}趟</text>
+            </view>
+          </view>
+          <view class="leg-divider">换乘</view>
+          <view class="leg">
+            <view class="leg-route">
+              <text class="leg-highlight">{{item.leg2.fromCity}}</text>
+              <text class="leg-arrow">→</text>
+              <text>{{item.leg2.toCity}}</text>
+            </view>
+            <view class="leg-info">
+              <text class="leg-price">¥{{item.leg2.minPrice}}</text>
+              <text class="leg-detail">{{item.leg2.duration}} · {{item.leg2.trainCount}}趟</text>
+            </view>
+          </view>
+        </view>
+        <view class="transfer-footer">
+          <text class="total-price">合计 ¥{{item.totalPrice}}</text>
+          <text class="total-duration">总历时 {{item.totalDuration}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{allTransfers.length > recommendations.length}}" class="section">
+      <view class="toggle-btn" bindtap="onToggleShow">
+        <text>{{showAll ? '收起其他方案' : '查看所有中转方案 (' + allTransfers.length + ')'}}</text>
+      </view>
+      <view wx:if="{{showAll}}" class="other-list">
+        <view wx:for="{{allTransfers}}" wx:key="transitCity" class="other-item">
+          <text class="other-city">{{item.transitCity}} 中转</text>
+          <text class="other-price">¥{{item.totalPrice}}</text>
+          <text class="other-duration">{{item.totalDuration}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!loading && recommendations.length === 0 && direct}}" class="no-recommend">
+      <text>直达已是较优方案，暂无更省钱的中转路线</text>
+    </view>
+
+    <view wx:if="{{!loading && !direct && allTransfers.length === 0}}" class="no-result">
+      <text>暂无可用路线</text>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="refresh-btn" bindtap="onRefresh">重新查询</view>
+</view>

@@ -2,7 +2,9 @@
   "pages": [
     "pages/index/index",
     "pages/city-list/city-list",
-    "pages/ticket-list/ticket-list"
+    "pages/ticket-list/ticket-list",
+    "pages/route-recommend/route-recommend",
+    "pages/hostel-list/hostel-list"
   ],
   "window": {
     "navigationBarBackgroundColor": "#1AAD19",

@@ -1,218 +1,383 @@
 const axios = require('axios');
 const config = require('../config');
+const { fetchStationData, getCodeToNameMap } = require('./station-service');
 
-const BASE_URL = 'https://apis.juhe.cn/fapigw/train/query';
+const JUHE_URL = 'https://apis.juhe.cn/fapigw/train/query';
+const API_12306_BASE = 'https://kyfw.12306.cn/otn/leftTicket/';
+const INIT_URL = 'https://kyfw.12306.cn/otn/leftTicket/init';
 
-const USE_MOCK = !config.apiKey || config.apiKey === 'your_api_key_here';
+const USE_JUHE = config.apiKey && config.apiKey !== 'your_api_key_here';
 
-const mockTrainsDB = {
-  '北京_上海': [
-    { trainNo: 'G1', fromStation: '北京南', toStation: '上海虹桥', startTime: '06:36', arriveTime: '11:48', duration: '5:12', prices: { '二等座': 553, '一等座': 933, '商务座': 1748 }, seats: { '二等座': 126, '一等座': 15, '商务座': 3 } },
-    { trainNo: 'G3', fromStation: '北京南', toStation: '上海虹桥', startTime: '07:00', arriveTime: '12:18', duration: '5:18', prices: { '二等座': 553, '一等座': 933, '商务座': 1748 }, seats: { '二等座': 89, '一等座': 22, '商务座': 5 } },
-    { trainNo: 'G7', fromStation: '北京南', toStation: '上海虹桥', startTime: '09:00', arriveTime: '13:28', duration: '4:28', prices: { '二等座': 553, '一等座': 933, '商务座': 1748 }, seats: { '二等座': 203, '一等座': 45, '商务座': 8 } },
-    { trainNo: 'D709', fromStation: '北京', toStation: '上海', startTime: '21:15', arriveTime: '07:25', duration: '10:10', prices: { '二等座': 327, '硬卧': 370, '软卧': 580 }, seats: { '二等座': 56, '硬卧': 30, '软卧': 8 } },
-  ],
-  '北京_南京': [
-    { trainNo: 'G1', fromStation: '北京南', toStation: '南京南', startTime: '06:36', arriveTime: '10:18', duration: '3:42', prices: { '二等座': 315, '一等座': 530 }, seats: { '二等座': 203, '一等座': 45 } },
-    { trainNo: 'G5', fromStation: '北京南', toStation: '南京南', startTime: '08:00', arriveTime: '11:32', duration: '3:32', prices: { '二等座': 315, '一等座': 530 }, seats: { '二等座': 178, '一等座': 32 } },
-    { trainNo: 'G9', fromStation: '北京南', toStation: '南京南', startTime: '10:00', arriveTime: '13:40', duration: '3:40', prices: { '二等座': 315, '一等座': 530 }, seats: { '二等座': 132, '一等座': 18 } },
-  ],
-  '北京_杭州': [
-    { trainNo: 'G35', fromStation: '北京南', toStation: '杭州东', startTime: '06:20', arriveTime: '11:12', duration: '4:52', prices: { '二等座': 264, '一等座': 447 }, seats: { '二等座': 89, '一等座': 12 } },
-    { trainNo: 'G37', fromStation: '北京南', toStation: '杭州东', startTime: '09:30', arriveTime: '14:18', duration: '4:48', prices: { '二等座': 264, '一等座': 447 }, seats: { '二等座': 156, '一等座': 28 } },
-  ],
-  '北京_广州': [
-    { trainNo: 'G79', fromStation: '北京西', toStation: '广州南', startTime: '07:26', arriveTime: '15:18', duration: '7:52', prices: { '二等座': 862, '一等座': 1380, '商务座': 2724 }, seats: { '二等座': 45, '一等座': 8, '商务座': 2 } },
-    { trainNo: 'G81', fromStation: '北京西', toStation: '广州南', startTime: '10:05', arriveTime: '18:02', duration: '7:57', prices: { '二等座': 862, '一等座': 1380 }, seats: { '二等座': 78, '一等座': 15 } },
-  ],
-  '北京_武汉': [
-    { trainNo: 'G501', fromStation: '北京西', toStation: '武汉', startTime: '07:10', arriveTime: '11:30', duration: '4:20', prices: { '二等座': 519, '一等座': 876 }, seats: { '二等座': 234, '一等座': 56 } },
-    { trainNo: 'G503', fromStation: '北京西', toStation: '武汉', startTime: '09:30', arriveTime: '13:52', duration: '4:22', prices: { '二等座': 519, '一等座': 876 }, seats: { '二等座': 167, '一等座': 34 } },
-  ],
-  '北京_成都': [
-    { trainNo: 'G87', fromStation: '北京西', toStation: '成都东', startTime: '06:55', arriveTime: '14:38', duration: '7:43', prices: { '二等座': 778, '一等座': 1246 }, seats: { '二等座': 32, '一等座': 6 } },
-    { trainNo: 'G89', fromStation: '北京西', toStation: '成都东', startTime: '09:20', arriveTime: '17:15', duration: '7:55', prices: { '二等座': 778, '一等座': 1246 }, seats: { '二等座': 18, '一等座': 3 } },
-  ],
-  '北京_西安': [
-    { trainNo: 'G87', fromStation: '北京西', toStation: '西安北', startTime: '06:55', arriveTime: '11:42', duration: '4:47', prices: { '二等座': 515, '一等座': 868 }, seats: { '二等座': 145, '一等座': 28 } },
-    { trainNo: 'G25', fromStation: '北京西', toStation: '西安北', startTime: '08:00', arriveTime: '12:40', duration: '4:40', prices: { '二等座': 515, '一等座': 868 }, seats: { '二等座': 198, '一等座': 42 } },
-  ],
-  '北京_长沙': [
-    { trainNo: 'G71', fromStation: '北京西', toStation: '长沙南', startTime: '07:26', arriveTime: '12:38', duration: '5:12', prices: { '二等座': 649, '一等座': 1098 }, seats: { '二等座': 112, '一等座': 23 } },
-    { trainNo: 'G73', fromStation: '北京西', toStation: '长沙南', startTime: '10:05', arriveTime: '15:20', duration: '5:15', prices: { '二等座': 649, '一等座': 1098 }, seats: { '二等座': 87, '一等座': 16 } },
-  ],
-  '北京_天津': [
-    { trainNo: 'C2001', fromStation: '北京南', toStation: '天津', startTime: '06:30', arriveTime: '07:00', duration: '0:30', prices: { '二等座': 54, '一等座': 91 }, seats: { '二等座': 523, '一等座': 112 } },
-    { trainNo: 'C2003', fromStation: '北京南', toStation: '天津', startTime: '07:00', arriveTime: '07:30', duration: '0:30', prices: { '二等座': 54, '一等座': 91 }, seats: { '二等座': 412, '一等座': 89 } },
-    { trainNo: 'C2005', fromStation: '北京南', toStation: '天津', startTime: '07:30', arriveTime: '08:00', duration: '0:30', prices: { '二等座': 54, '一等座': 91 }, seats: { '二等座': 356, '一等座': 67 } },
-  ],
-  '北京_郑州': [
-    { trainNo: 'G89', fromStation: '北京西', toStation: '郑州东', startTime: '06:55', arriveTime: '09:38', duration: '2:43', prices: { '二等座': 309, '一等座': 521 }, seats: { '二等座': 267, '一等座': 58 } },
-    { trainNo: 'G91', fromStation: '北京西', toStation: '郑州东', startTime: '08:30', arriveTime: '11:12', duration: '2:42', prices: { '二等座': 309, '一等座': 521 }, seats: { '二等座': 189, '一等座': 35 } },
-  ],
-  '北京_济南': [
-    { trainNo: 'G1', fromStation: '北京南', toStation: '济南西', startTime: '06:36', arriveTime: '08:10', duration: '1:34', prices: { '二等座': 184, '一等座': 310 }, seats: { '二等座': 312, '一等座': 78 } },
-    { trainNo: 'G3', fromStation: '北京南', toStation: '济南西', startTime: '07:00', arriveTime: '08:36', duration: '1:36', prices: { '二等座': 184, '一等座': 310 }, seats: { '二等座': 245, '一等座': 56 } },
-  ],
-  '北京_青岛': [
-    { trainNo: 'G197', fromStation: '北京南', toStation: '青岛', startTime: '06:30', arriveTime: '10:18', duration: '3:48', prices: { '二等座': 336, '一等座': 565 }, seats: { '二等座': 98, '一等座': 19 } },
-    { trainNo: 'G199', fromStation: '北京南', toStation: '青岛', startTime: '09:30', arriveTime: '13:22', duration: '3:52', prices: { '二等座': 336, '一等座': 565 }, seats: { '二等座': 67, '一等座': 12 } },
-  ],
-  '北京_沈阳': [
-    { trainNo: 'G901', fromStation: '北京朝阳', toStation: '沈阳', startTime: '07:00', arriveTime: '10:28', duration: '3:28', prices: { '二等座': 355, '一等座': 598 }, seats: { '二等座': 134, '一等座': 26 } },
-    { trainNo: 'G903', fromStation: '北京朝阳', toStation: '沈阳', startTime: '09:15', arriveTime: '12:48', duration: '3:33', prices: { '二等座': 355, '一等座': 598 }, seats: { '二等座': 89, '一等座': 14 } },
-  ],
-  '北京_合肥': [
-    { trainNo: 'G23', fromStation: '北京南', toStation: '合肥南', startTime: '07:30', arriveTime: '10:48', duration: '3:18', prices: { '二等座': 436, '一等座': 734 }, seats: { '二等座': 156, '一等座': 32 } },
-    { trainNo: 'G25', fromStation: '北京南', toStation: '合肥南', startTime: '10:00', arriveTime: '13:22', duration: '3:22', prices: { '二等座': 436, '一等座': 734 }, seats: { '二等座': 112, '一等座': 21 } },
-  ],
-  '北京_石家庄': [
-    { trainNo: 'G6701', fromStation: '北京西', toStation: '石家庄', startTime: '06:30', arriveTime: '07:42', duration: '1:12', prices: { '二等座': 128, '一等座': 215 }, seats: { '二等座': 456, '一等座': 98 } },
-    { trainNo: 'G6703', fromStation: '北京西', toStation: '石家庄', startTime: '07:30', arriveTime: '08:42', duration: '1:12', prices: { '二等座': 128, '一等座': 215 }, seats: { '二等座': 378, '一等座': 76 } },
-  ],
-  '北京_太原': [
-    { trainNo: 'G91', fromStation: '北京丰台', toStation: '太原南', startTime: '07:20', arriveTime: '09:52', duration: '2:32', prices: { '二等座': 257, '一等座': 432 }, seats: { '二等座': 78, '一等座': 15 } },
-    { trainNo: 'G93', fromStation: '北京丰台', toStation: '太原南', startTime: '10:30', arriveTime: '13:02', duration: '2:32', prices: { '二等座': 257, '一等座': 432 }, seats: { '二等座': 56, '一等座': 9 } },
-  ],
-  '北京_哈尔滨': [
-    { trainNo: 'G901', fromStation: '北京朝阳', toStation: '哈尔滨西', startTime: '07:00', arriveTime: '12:48', duration: '5:48', prices: { '二等座': 541, '一等座': 912 }, seats: { '二等座': 34, '一等座': 7 } },
-  ],
-  '北京_大连': [
-    { trainNo: 'G995', fromStation: '北京朝阳', toStation: '大连北', startTime: '07:50', arriveTime: '11:58', duration: '4:08', prices: { '二等座': 399, '一等座': 672 }, seats: { '二等座': 67, '一等座': 12 } },
-  ],
-  '北京_福州': [
-    { trainNo: 'G45', fromStation: '北京南', toStation: '福州', startTime: '07:20', arriveTime: '14:38', duration: '7:18', prices: { '二等座': 672, '一等座': 1134 }, seats: { '二等座': 45, '一等座': 8 } },
-  ],
-  '北京_厦门': [
-    { trainNo: 'G323', fromStation: '北京南', toStation: '厦门北', startTime: '07:40', arriveTime: '16:28', duration: '8:48', prices: { '二等座': 803, '一等座': 1354 }, seats: { '二等座': 23, '一等座': 4 } },
-  ],
-  '北京_南昌': [
-    { trainNo: 'G891', fromStation: '北京西', toStation: '南昌西', startTime: '07:15', arriveTime: '12:38', duration: '5:23', prices: { '二等座': 568, '一等座': 958 }, seats: { '二等座': 67, '一等座': 12 } },
-  ],
-  '北京_兰州': [
-    { trainNo: 'G91', fromStation: '北京西', toStation: '兰州西', startTime: '07:20', arriveTime: '14:38', duration: '7:18', prices: { '二等座': 688, '一等座': 1160 }, seats: { '二等座': 28, '一等座': 5 } },
-  ],
-  '北京_苏州': [
-    { trainNo: 'G1', fromStation: '北京南', toStation: '苏州北', startTime: '06:36', arriveTime: '11:12', duration: '4:36', prices: { '二等座': 523, '一等座': 881 }, seats: { '二等座': 145, '一等座': 28 } },
-  ],
-  '北京_无锡': [
-    { trainNo: 'G3', fromStation: '北京南', toStation: '无锡东', startTime: '07:00', arriveTime: '11:42', duration: '4:42', prices: { '二等座': 538, '一等座': 906 }, seats: { '二等座': 98, '一等座': 18 } },
-  ],
-  '北京_徐州': [
-    { trainNo: 'G1', fromStation: '北京南', toStation: '徐州东', startTime: '06:36', arriveTime: '09:18', duration: '2:42', prices: { '二等座': 269, '一等座': 453 }, seats: { '二等座': 234, '一等座': 48 } },
-  ],
-  '北京_贵阳': [
-    { trainNo: 'G81', fromStation: '北京西', toStation: '贵阳北', startTime: '07:26', arriveTime: '15:38', duration: '8:12', prices: { '二等座': 964, '一等座': 1628 }, seats: { '二等座': 15, '一等座': 3 } },
-  ],
-  '北京_昆明': [
-    { trainNo: 'G71', fromStation: '北京西', toStation: '昆明南', startTime: '07:26', arriveTime: '17:18', duration: '9:52', prices: { '二等座': 1149, '一等座': 1942 }, seats: { '二等座': 12, '一等座': 2 } },
-  ],
-  '北京_南宁': [
-    { trainNo: 'G93', fromStation: '北京西', toStation: '南宁东', startTime: '08:30', arriveTime: '18:42', duration: '10:12', prices: { '二等座': 1012, '一等座': 1708 }, seats: { '二等座': 8, '一等座': 1 } },
-  ],
-  '北京_深圳': [
-    { trainNo: 'G79', fromStation: '北京西', toStation: '深圳北', startTime: '07:26', arriveTime: '15:48', duration: '8:22', prices: { '二等座': 968, '一等座': 1636, '商务座': 3040 }, seats: { '二等座': 34, '一等座': 6, '商务座': 1 } },
-  ],
-  '北京_重庆': [
-    { trainNo: 'G87', fromStation: '北京西', toStation: '重庆西', startTime: '06:55', arriveTime: '15:08', duration: '8:13', prices: { '二等座': 852, '一等座': 1440 }, seats: { '二等座': 22, '一等座': 4 } },
-  ],
+const SEAT_NAMES = {
+  swz: '商务座',
+  zy: '一等座',
+  ze: '二等座',
+  rw: '软卧',
+  yw: '硬卧',
+  yz: '硬座',
+  wz: '无座',
+  gr: '高级软卧',
+  tz: '特等座',
+  srrb: '动卧',
 };
 
-function getMockKey(fromCity, toCity) {
-  return `${fromCity}_${toCity}`;
-}
+const SEAT_POSITIONS = {
+  swz: 32,
+  tz: 25,
+  zy: 31,
+  ze: 30,
+  gr: 21,
+  rw: 23,
+  yw: 28,
+  yz: 29,
+  wz: 26,
+  srrb: 33,
+};
 
-function generateMockTrains(fromCity, toCity) {
-  const key = getMockKey(fromCity, toCity);
-  if (mockTrainsDB[key]) {
-    return mockTrainsDB[key];
-  }
-  const prefixes = ['G', 'D', 'K'];
-  const prefix = prefixes[Math.floor(Math.random() * 2)];
-  const num = Math.floor(Math.random() * 900) + 100;
-  const hours = Math.floor(Math.random() * 8) + 2;
-  const mins = Math.floor(Math.random() * 59);
-  const startH = Math.floor(Math.random() * 12) + 6;
-  const startM = Math.floor(Math.random() * 59);
-  const arrH = startH + hours;
-  const arrM = startM + mins;
-  const price = Math.floor(Math.random() * 500) + 150;
-  const seats = Math.floor(Math.random() * 200) + 10;
-  return [
-    {
-      trainNo: `${prefix}${num}`,
-      fromStation: fromCity,
-      toStation: toCity,
-      startTime: `${String(startH).padStart(2, '0')}:${String(startM).padStart(2, '0')}`,
-      arriveTime: `${String(arrH % 24).padStart(2, '0')}:${String(arrM % 60).padStart(2, '0')}`,
-      duration: `${hours}:${String(mins).padStart(2, '0')}`,
-      prices: { '二等座': price, '一等座': Math.floor(price * 1.7) },
-      seats: { '二等座': seats, '一等座': Math.floor(seats * 0.2) },
-    },
-  ];
-}
+const PRICE_RATES = {
+  G: { '商务座': 1.45, '特等座': 1.10, '一等座': 0.77, '二等座': 0.46, '无座': 0.46 },
+  D: { '一等座': 0.37, '二等座': 0.31, '动卧': 0.55, '软卧': 0.45, '硬卧': 0.30, '无座': 0.31 },
+  C: { '一等座': 0.37, '二等座': 0.31, '无座': 0.31 },
+  Z: { '高级软卧': 0.65, '软卧': 0.33, '硬卧': 0.21, '硬座': 0.12, '无座': 0.12 },
+  T: { '高级软卧': 0.65, '软卧': 0.33, '硬卧': 0.21, '硬座': 0.12, '无座': 0.12 },
+  K: { '高级软卧': 0.65, '软卧': 0.33, '硬卧': 0.21, '硬座': 0.12, '无座': 0.12 },
+};
 
-function convertJuheData(juheResult) {
-  if (!juheResult) return [];
-  const list = Array.isArray(juheResult) ? juheResult : (juheResult.list || []);
-  if (!list.length) return [];
-  return list.map((item) => {
-    const prices = {};
-    const seats = {};
-    if (item.items && Array.isArray(item.items)) {
-      item.items.forEach((seat) => {
-        if (seat.name && seat.price) {
-          prices[seat.name] = parseInt(seat.price) || 0;
-        }
-        if (seat.name && seat.number !== undefined) {
-          seats[seat.name] = seat.number === '' ? '有' : (parseInt(seat.number) || 0);
-        }
-      });
+const AVG_SPEED = {
+  G: 250,
+  D: 160,
+  C: 140,
+  Z: 90,
+  T: 85,
+  K: 75,
+};
+
+const KNOWN_PRICES = {
+  '北京南_上海虹桥': { '二等座': 553, '一等座': 933, '商务座': 1748 },
+  '北京南_南京南': { '二等座': 315, '一等座': 530, '商务座': 996 },
+  '北京南_杭州东': { '二等座': 264, '一等座': 447, '商务座': 838 },
+  '北京西_广州南': { '二等座': 862, '一等座': 1380, '商务座': 2724 },
+  '北京西_武汉': { '二等座': 519, '一等座': 876, '商务座': 1643 },
+  '北京西_成都东': { '二等座': 778, '一等座': 1246, '商务座': 2417 },
+  '北京西_西安北': { '二等座': 515, '一等座': 868, '商务座': 1627 },
+  '北京南_天津': { '二等座': 54, '一等座': 91 },
+  '北京西_郑州东': { '二等座': 309, '一等座': 521, '商务座': 977 },
+  '北京南_济南西': { '二等座': 184, '一等座': 310, '商务座': 580 },
+  '北京南_青岛': { '二等座': 336, '一等座': 565, '商务座': 1058 },
+  '北京朝阳_沈阳': { '二等座': 355, '一等座': 598, '商务座': 1120 },
+  '北京西_长沙南': { '二等座': 649, '一等座': 1098, '商务座': 2057 },
+  '北京西_石家庄': { '二等座': 128, '一等座': 215 },
+  '北京丰台_太原南': { '二等座': 257, '一等座': 432 },
+  '北京南_合肥南': { '二等座': 436, '一等座': 734, '商务座': 1375 },
+  '上海虹桥_南京南': { '二等座': 134, '一等座': 229, '商务座': 428 },
+  '上海虹桥_杭州东': { '二等座': 73, '一等座': 124, '商务座': 232 },
+  '上海_北京南': { '二等座': 553, '一等座': 933, '商务座': 1748 },
+  '广州南_长沙南': { '二等座': 314, '一等座': 528, '商务座': 996 },
+  '广州南_武汉': { '二等座': 463, '一等座': 738, '商务座': 1458 },
+  '成都东_重庆西': { '二等座': 154, '一等座': 256 },
+  '西安北_郑州东': { '二等座': 259, '一等座': 437, '商务座': 819 },
+};
+
+function parseSeatInfo(resultStr) {
+  const parts = resultStr.split('|');
+  const seats = {};
+
+  for (const [key, pos] of Object.entries(SEAT_POSITIONS)) {
+    if (pos < parts.length) {
+      const val = parts[pos];
+      if (val && val !== '' && val !== '*') {
+        const name = SEAT_NAMES[key] || key;
+        const num = parseInt(val);
+        seats[name] = isNaN(num) ? val : num;
+      }
     }
-    return {
-      trainNo: item.train_no || item.station_train_code || '',
-      fromStation: item.from_station_name || item.start_station_telecode_name || '',
-      toStation: item.to_station_name || item.end_station_telecode_name || '',
-      startTime: item.start_time || '',
-      arriveTime: item.arrive_time || '',
-      duration: item.lishi || item.run_time || '',
-      prices,
+  }
+
+  return seats;
+}
+
+function parseDuration(duration) {
+  if (!duration) return 0;
+  const parts = duration.split(':');
+  if (parts.length < 2) return 0;
+  return parseInt(parts[0]) + parseInt(parts[1]) / 60;
+}
+
+function estimateDistance(durationHours, trainPrefix) {
+  const speed = AVG_SPEED[trainPrefix] || 100;
+  return durationHours * speed;
+}
+
+function estimatePrices(train) {
+  const prefix = train.trainNo.charAt(0);
+  const rates = PRICE_RATES[prefix];
+  if (!rates) return {};
+
+  const key = `${train.fromStation}_${train.toStation}`;
+  const knownPrice = KNOWN_PRICES[key];
+
+  if (knownPrice && prefix === 'G') {
+    const prices = {};
+    for (const [seatType, count] of Object.entries(train.seats)) {
+      if (knownPrice[seatType]) {
+        prices[seatType] = knownPrice[seatType];
+      }
+    }
+    return prices;
+  }
+
+  const reverseKey = `${train.toStation}_${train.fromStation}`;
+  const reverseKnown = KNOWN_PRICES[reverseKey];
+  if (reverseKnown && prefix === 'G') {
+    const prices = {};
+    for (const [seatType, count] of Object.entries(train.seats)) {
+      if (reverseKnown[seatType]) {
+        prices[seatType] = reverseKnown[seatType];
+      }
+    }
+    return prices;
+  }
+
+  const durationHours = parseDuration(train.duration);
+  if (durationHours <= 0) return {};
+
+  const distance = estimateDistance(durationHours, prefix);
+  const prices = {};
+
+  for (const [seatType, count] of Object.entries(train.seats)) {
+    if (rates[seatType]) {
+      prices[seatType] = Math.round(distance * rates[seatType]);
+    }
+  }
+
+  return prices;
+}
+
+function parse12306Response(data) {
+  if (!data || !data.result || !Array.isArray(data.result)) {
+    return [];
+  }
+
+  const codeToName = getCodeToNameMap();
+
+  return data.result.map((resultStr) => {
+    const parts = resultStr.split('|');
+    const seats = parseSeatInfo(resultStr);
+
+    const fromCode = parts[6] || '';
+    const toCode = parts[7] || '';
+
+    const train = {
+      trainNo: parts[3] || '',
+      fromStation: codeToName[fromCode] || fromCode,
+      toStation: codeToName[toCode] || toCode,
+      startTime: parts[8] || '',
+      arriveTime: parts[9] || '',
+      duration: parts[10] || '',
       seats,
+      prices: {},
     };
-  });
+
+    train.prices = estimatePrices(train);
+
+    return train;
+  }).filter((train) => train.trainNo !== '');
+}
+
+let cachedCookies = null;
+let cookieTimestamp = 0;
+const COOKIE_TTL = 5 * 60 * 1000;
+
+async function get12306Cookies() {
+  const now = Date.now();
+  if (cachedCookies && now - cookieTimestamp < COOKIE_TTL) {
+    return cachedCookies;
+  }
+
+  try {
+    const response = await axios.get(INIT_URL, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      },
+      timeout: 15000,
+    });
+
+    const setCookies = response.headers['set-cookie'];
+    if (setCookies) {
+      const cookies = setCookies.map((c) => c.split(';')[0]).join('; ');
+      cachedCookies = cookies;
+      cookieTimestamp = now;
+      console.log('获取12306 Cookie成功');
+      return cookies;
+    }
+
+    return '';
+  } catch (error) {
+    console.error('获取12306 Cookie失败:', error.message);
+    return '';
+  }
+}
+
+const QUERY_ENDPOINTS = ['queryZ', 'queryA', 'queryG', 'query'];
+
+async function query12306(fromCity, toCity, date) {
+  const stationMap = await fetchStationData();
+
+  const fromCode = stationMap[fromCity];
+  const toCode = stationMap[toCity];
+
+  if (!fromCode) {
+    console.error(`未找到出发城市站点代码: ${fromCity}`);
+    return null;
+  }
+  if (!toCode) {
+    console.error(`未找到目的城市站点代码: ${toCity}`);
+    return null;
+  }
+
+  const cookies = await get12306Cookies();
+
+  for (const endpoint of QUERY_ENDPOINTS) {
+    try {
+      const url = `${API_12306_BASE}${endpoint}`;
+      const response = await axios.get(url, {
+        params: {
+          'leftTicketDTO.train_date': date,
+          'leftTicketDTO.from_station': fromCode,
+          'leftTicketDTO.to_station': toCode,
+          'purpose_codes': 'ADULT',
+        },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': '*/*',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          'Referer': 'https://kyfw.12306.cn/otn/leftTicket/init',
+          'Cookie': cookies,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        timeout: 15000,
+      });
+
+      if (response.data && response.data.httpstatus === 200 && response.data.data && response.data.data.result) {
+        const trains = parse12306Response(response.data.data);
+        console.log(`12306查询成功(${endpoint}): ${fromCity}→${toCity} ${date}, 共${trains.length}趟车次`);
+        return trains;
+      }
+
+      if (response.data && response.data.status === false && response.data.c_url) {
+        const redirectUrl = response.data.c_url;
+        try {
+          const redirectResponse = await axios.get(`${API_12306_BASE}${redirectUrl}`, {
+            params: {
+              'leftTicketDTO.train_date': date,
+              'leftTicketDTO.from_station': fromCode,
+              'leftTicketDTO.to_station': toCode,
+              'purpose_codes': 'ADULT',
+            },
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': '*/*',
+              'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+              'Referer': 'https://kyfw.12306.cn/otn/leftTicket/init',
+              'Cookie': cookies,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+            timeout: 15000,
+          });
+
+          if (redirectResponse.data && redirectResponse.data.httpstatus === 200 && redirectResponse.data.data && redirectResponse.data.data.result) {
+            const trains = parse12306Response(redirectResponse.data.data);
+            console.log(`12306重定向查询成功(${redirectUrl}): ${fromCity}→${toCity} ${date}, 共${trains.length}趟车次`);
+            return trains;
+          }
+        } catch (redirectErr) {
+          console.error(`12306重定向请求失败:`, redirectErr.message);
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status !== 404) {
+        console.error(`12306端点${endpoint}请求失败:`, error.message);
+      }
+    }
+  }
+
+  console.error('所有12306查询端点均失败');
+  return null;
+}
+
+async function queryJuhe(fromCity, toCity, date) {
+  if (!USE_JUHE) return null;
+
+  try {
+    const response = await axios.get(JUHE_URL, {
+      params: {
+        start: fromCity,
+        end: toCity,
+        date: date,
+        key: config.apiKey,
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      timeout: 10000,
+    });
+    const result = response.data;
+    if (result.error_code === 0 && result.result) {
+      const list = Array.isArray(result.result) ? result.result : (result.result.list || []);
+      if (list.length > 0) {
+        return list.map((item) => {
+          const prices = {};
+          const seats = {};
+          if (item.items && Array.isArray(item.items)) {
+            item.items.forEach((seat) => {
+              if (seat.name && seat.price) {
+                prices[seat.name] = parseInt(seat.price) || 0;
+              }
+              if (seat.name && seat.number !== undefined) {
+                seats[seat.name] = seat.number === '' ? '有' : (parseInt(seat.number) || 0);
+              }
+            });
+          }
+          return {
+            trainNo: item.train_no || item.station_train_code || '',
+            fromStation: item.from_station_name || '',
+            toStation: item.to_station_name || '',
+            startTime: item.start_time || '',
+            arriveTime: item.arrive_time || '',
+            duration: item.lishi || item.run_time || '',
+            prices,
+            seats,
+          };
+        });
+      }
+    }
+    console.error(`聚合数据返回错误: ${result.reason || '未知错误'}`);
+    return null;
+  } catch (error) {
+    console.error(`聚合数据查询失败: ${fromCity}→${toCity}`, error.message);
+    return null;
+  }
 }
 
 const ticketService = {
   async queryTickets(fromCity, toCity, date) {
-    if (USE_MOCK) {
-      return { code: 200, data: generateMockTrains(fromCity, toCity) };
+    const trains12306 = await query12306(fromCity, toCity, date);
+    if (trains12306 && trains12306.length > 0) {
+      return { code: 200, data: trains12306 };
     }
-    try {
-      const response = await axios.get(BASE_URL, {
-        params: {
-          start: fromCity,
-          end: toCity,
-          date: date,
-          key: config.apiKey,
-        },
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        timeout: 10000,
-      });
-      const result = response.data;
-      if (result.error_code === 0 && result.result) {
-        const converted = convertJuheData(result.result);
-        if (converted.length > 0) {
-          return { code: 200, data: converted };
-        }
-      }
-      console.error(`聚合数据返回错误: ${result.reason || '未知错误'}, 使用mock数据`);
-      return { code: 200, data: generateMockTrains(fromCity, toCity) };
-    } catch (error) {
-      console.error(`查询 ${fromCity}→${toCity} 失败:`, error.message);
-      return { code: 200, data: generateMockTrains(fromCity, toCity) };
+
+    const trainsJuhe = await queryJuhe(fromCity, toCity, date);
+    if (trainsJuhe && trainsJuhe.length > 0) {
+      return { code: 200, data: trainsJuhe };
     }
+
+    return { code: 200, data: [] };
+  },
+
+  async queryTicketsWithPrices(fromCity, toCity, date) {
+    return await this.queryTickets(fromCity, toCity, date);
   },
 };
 
