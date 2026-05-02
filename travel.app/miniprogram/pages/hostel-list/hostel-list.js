@@ -30,7 +30,6 @@ Page({
         hostels: data.hostels || [],
       });
     } catch (err) {
-      console.error('查询住宿数据失败:', err);
       wx.showToast({ title: '查询失败，请重试', icon: 'none' });
     } finally {
       this.setData({ loading: false });

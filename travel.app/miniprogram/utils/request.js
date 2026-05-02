@@ -16,7 +16,6 @@ function request(url, method, data) {
         }
       },
       fail(err) {
-        console.error('请求失败:', url, err);
         reject(err);
       },
     });

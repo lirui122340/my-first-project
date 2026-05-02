@@ -27,7 +27,6 @@ Page({
       });
       this.setData({ destinations: data.destinations || [] });
     } catch (err) {
-      console.error('查询可直达城市失败:', err);
       wx.showToast({ title: '查询失败，请重试', icon: 'none' });
     } finally {
       this.setData({ loading: false });
