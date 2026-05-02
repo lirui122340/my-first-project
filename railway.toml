@@ -2,5 +2,5 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "cd travel.app/server-python && gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
+startCommand = "./start.sh"
 numReplicas = 1
