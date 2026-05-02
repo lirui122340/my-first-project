@@ -23,17 +23,6 @@ def index():
     return jsonify({'code': 0, 'message': '省钱旅游小程序后端服务运行中'})
 
 
-@app.route('/routes')
-def list_routes():
-    routes = []
-    for rule in app.url_map.iter_rules():
-        routes.append({
-            'method': list(rule.methods),
-            'path': str(rule)
-        })
-    return jsonify({'code': 0, 'routes': routes})
-
-
 if __name__ == '__main__':
     print(f'服务器已启动: http://localhost:{config.PORT}')
     app.run(host='0.0.0.0', port=config.PORT, debug=True)

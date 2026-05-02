@@ -1,8 +1,8 @@
 [build]
 builder = "python"
 root = "server-python"
-buildCommand = "pip install -r requirements.txt && pip install gunicorn"
-startCommand = "cd server-python && PYTHONPATH=. gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
+buildCommand = "pip install -r requirements.txt"
+startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
 
 [deploy]
 numReplicas = 1
