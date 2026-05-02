@@ -1,8 +1,7 @@
 [build]
-builder = "python"
+builder = "nixpacks"
 root = "server-python"
-buildCommand = "pip install -r requirements.txt"
-startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
 
 [deploy]
+startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
 numReplicas = 1
