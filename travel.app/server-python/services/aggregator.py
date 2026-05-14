@@ -1,10 +1,12 @@
 import time
 import asyncio
-import aiohttp
 import config
 from services.ticket_service import query_12306, query_juhe
 
 _cache = {}
+
+MAX_DESTINATIONS = 12
+OVERALL_TIMEOUT = 45
 
 
 def _get_cache_key(from_city, date):
@@ -98,21 +100,26 @@ def _aggregate_results(from_city, date, results):
     return {'fromCity': from_city, 'date': date, 'destinations': destination_list}
 
 
-async def _query_single_city(session, from_city, to_city, date):
+async def _query_single_city(from_city, to_city, date):
     loop = asyncio.get_event_loop()
     try:
-        result = await loop.run_in_executor(
-            None, query_12306, from_city, to_city, date
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, query_12306, from_city, to_city, date),
+            timeout=10
         )
         if result and len(result) > 0:
             return to_city, result
 
-        result = await loop.run_in_executor(
-            None, query_juhe, from_city, to_city, date
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, query_juhe, from_city, to_city, date),
+            timeout=8
         )
         if result and len(result) > 0:
             return to_city, result
 
+        return to_city, []
+    except asyncio.TimeoutError:
+        print(f'查询 {from_city}→{to_city} 超时')
         return to_city, []
     except Exception as e:
         print(f'查询 {from_city}→{to_city} 失败: {e}')
@@ -121,14 +128,14 @@ async def _query_single_city(session, from_city, to_city, date):
 
 async def _batch_query_async(from_city, date, destinations):
     results = []
-    semaphore = asyncio.Semaphore(config.CONCURRENCY_LIMIT)
+    semaphore = asyncio.Semaphore(3)
 
     async def limited_query(to_city):
         async with semaphore:
-            return await _query_single_city(None, from_city, to_city, date)
+            return await _query_single_city(from_city, to_city, date)
 
-    for i in range(0, len(destinations), config.CONCURRENCY_LIMIT):
-        batch = destinations[i:i + config.CONCURRENCY_LIMIT]
+    for i in range(0, len(destinations), 3):
+        batch = destinations[i:i + 3]
         tasks = [limited_query(to_city) for to_city in batch]
         batch_results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -138,8 +145,8 @@ async def _batch_query_async(from_city, date, destinations):
             else:
                 results.append(r)
 
-        if i + config.CONCURRENCY_LIMIT < len(destinations):
-            await asyncio.sleep(config.REQUEST_DELAY)
+        if i + 3 < len(destinations):
+            await asyncio.sleep(0.2)
 
     return results
 
@@ -150,27 +157,37 @@ def batch_query_destinations(from_city, date, city_mapping):
     if cached:
         return cached
 
-    destinations = city_mapping.get(from_city, [])
-    if not destinations:
+    all_destinations = city_mapping.get(from_city, [])
+    if not all_destinations:
         return {'fromCity': from_city, 'date': date, 'destinations': []}
 
-    loop = None
+    destinations = all_destinations[:MAX_DESTINATIONS]
+
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                results = pool.submit(
-                    lambda: asyncio.run(_batch_query_async(from_city, date, destinations))
-                ).result()
-        else:
-            results = loop.run_until_complete(
-                _batch_query_async(from_city, date, destinations)
-            )
-    except RuntimeError:
         results = asyncio.run(
-            _batch_query_async(from_city, date, destinations)
+            asyncio.wait_for(
+                _batch_query_async(from_city, date, destinations),
+                timeout=OVERALL_TIMEOUT
+            )
         )
+    except asyncio.TimeoutError:
+        print(f'批量查询总体超时({OVERALL_TIMEOUT}s)，返回已获取的结果')
+        results = []
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            results = loop.run_until_complete(
+                asyncio.wait_for(
+                    _batch_query_async(from_city, date, destinations),
+                    timeout=OVERALL_TIMEOUT
+                )
+            )
+        except asyncio.TimeoutError:
+            print(f'批量查询总体超时({OVERALL_TIMEOUT}s)，返回已获取的结果')
+            results = []
+        finally:
+            loop.close()
 
     aggregated = _aggregate_results(from_city, date, results)
     _set_cache(cache_key, aggregated)

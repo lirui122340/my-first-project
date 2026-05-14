@@ -3,19 +3,9 @@ import os
 from flask import Blueprint, request, jsonify
 from services.aggregator import batch_query_destinations
 from services.ticket_service import query_tickets_with_prices
+from services.city_service import get_city_mapping, get_destinations_from_db
 
 ticket_bp = Blueprint('ticket', __name__, url_prefix='/api/ticket')
-
-_city_mapping = None
-
-
-def _get_city_mapping():
-    global _city_mapping
-    if _city_mapping is None:
-        data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'city_mapping.json')
-        with open(data_path, 'r', encoding='utf-8') as f:
-            _city_mapping = json.load(f)
-    return _city_mapping
 
 
 @ticket_bp.route('/destinations', methods=['GET'])
@@ -28,7 +18,7 @@ def get_destinations():
         return jsonify({'code': 1, 'message': '缺少必要参数: from_city, date'}), 400
 
     try:
-        city_mapping = _get_city_mapping()
+        city_mapping = get_city_mapping()
         result = batch_query_destinations(from_city, date, city_mapping)
 
         if sort_by == 'price':
@@ -43,6 +33,29 @@ def get_destinations():
         return jsonify({'code': 0, 'message': 'success', 'data': result})
     except Exception as e:
         print(f'查询可直达城市失败: {e}')
+        return jsonify({'code': 1, 'message': '服务器内部错误'}), 500
+
+
+@ticket_bp.route('/quick-destinations', methods=['GET'])
+def get_quick_destinations():
+    from_city = request.args.get('from_city', '')
+
+    if not from_city:
+        return jsonify({'code': 1, 'message': '缺少必要参数: from_city'}), 400
+
+    try:
+        destinations = get_destinations_from_db(from_city)
+
+        return jsonify({
+            'code': 0,
+            'message': 'success',
+            'data': {
+                'fromCity': from_city,
+                'destinations': destinations,
+            }
+        })
+    except Exception as e:
+        print(f'查询可直达城市列表失败: {e}')
         return jsonify({'code': 1, 'message': '服务器内部错误'}), 500
 
 

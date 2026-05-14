@@ -3,7 +3,7 @@ Page({
     fromCity: '',
     date: '',
     today: '',
-    showCityPicker: false,
+    showCityPicker: false,// 控制城市选择弹窗是否显示（false=隐藏）
   },
 
   onLoad() {

@@ -5,6 +5,7 @@ function request(url, method, data) {
       url: app.globalData.baseUrl + url,
       method: method || 'GET',
       data: data || {},
+      timeout: 60000,
       header: {
         'content-type': 'application/json',
       },

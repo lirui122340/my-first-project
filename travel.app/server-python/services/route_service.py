@@ -2,17 +2,7 @@ import json
 import os
 import asyncio
 from services.ticket_service import query_12306, query_juhe
-
-_city_mapping = None
-
-
-def _get_city_mapping():
-    global _city_mapping
-    if _city_mapping is None:
-        data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'city_mapping.json')
-        with open(data_path, 'r', encoding='utf-8') as f:
-            _city_mapping = json.load(f)
-    return _city_mapping
+from services.city_service import get_city_mapping
 
 
 def _find_transit_cities(from_city, to_city, city_mapping):
@@ -87,7 +77,7 @@ async def _query_leg(from_city, to_city, date):
 
 
 async def find_transfer_routes(from_city, to_city, date):
-    city_mapping = _get_city_mapping()
+    city_mapping = get_city_mapping()
     transit_cities = _find_transit_cities(from_city, to_city, city_mapping)
 
     direct_trains = await _query_leg(from_city, to_city, date)
@@ -185,14 +175,10 @@ async def find_transfer_routes(from_city, to_city, date):
 
 def find_transfer_routes_sync(from_city, to_city, date):
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                return pool.submit(
-                    lambda: asyncio.run(find_transfer_routes(from_city, to_city, date))
-                ).result()
-        else:
-            return loop.run_until_complete(find_transfer_routes(from_city, to_city, date))
-    except RuntimeError:
         return asyncio.run(find_transfer_routes(from_city, to_city, date))
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(find_transfer_routes(from_city, to_city, date))
+        loop.close()
+        return result

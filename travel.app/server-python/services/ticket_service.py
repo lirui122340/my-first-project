@@ -205,9 +205,9 @@ def _get_12306_cookies():
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         }, timeout=15)
 
-        set_cookies = response.headers.get('Set-Cookie')
-        if set_cookies:
-            cookies = '; '.join(c.split(';')[0] for c in set_cookies.split(', '))
+        cookies_dict = dict(response.cookies)
+        if cookies_dict:
+            cookies = '; '.join(f'{k}={v}' for k, v in cookies_dict.items())
             _cached_cookies = cookies
             _cookie_timestamp = now
             print('获取12306 Cookie成功')

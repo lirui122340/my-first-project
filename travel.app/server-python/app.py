@@ -1,5 +1,4 @@
-from dotenv import load_dotenv
-load_dotenv()
+import os
 
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -7,7 +6,6 @@ from routes.ticket import ticket_bp
 from routes.city import city_bp
 from routes.route import route_bp
 from routes.hostel import hostel_bp
-import config
 
 app = Flask(__name__)
 CORS(app)
@@ -23,6 +21,12 @@ def index():
     return jsonify({'code': 0, 'message': '省钱旅游小程序后端服务运行中'})
 
 
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'}), 200
+
+
 if __name__ == '__main__':
-    print(f'服务器已启动: http://localhost:{config.PORT}')
-    app.run(host='0.0.0.0', port=config.PORT, debug=True)
+    port = int(os.environ.get('PORT', 3000))
+    print(f'服务器已启动: http://0.0.0.0:{port}')
+    app.run(host='0.0.0.0', port=port, debug=True)
